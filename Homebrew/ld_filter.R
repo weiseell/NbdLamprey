@@ -1,5 +1,8 @@
 #ld_filter - function
 #Goal: select SNPs based on a window size to prevent excess linked loci
+
+#ld_filter
+#select SNPs based on a window size to prevent excess linked loci
 #good for Ne estimates where excess linked loci would create bias
 #default window is 1MB, which is a conservative number to ensure independent loci
 #can change based on recombination rates for specific species
@@ -36,10 +39,16 @@ ld_filter <- function(summ,gt,window = 1000000,pGT_min = 0.8){
     group_by(CHROM,nloci2) %>%
     arrange(nloci2,desc(MAF),desc(pGT),nloci3,rvar) %>%
     slice(1)
+
+  hist(loci_select$MAF)
+  hist(loci_select$pGT)
+
   
   loci_select1 <- merge(loci_select,geno)
   loci_select1 <- loci_select1 %>% 
     select(-het:-MAF,-nloci1:-rvar)
   
+
   list(loci_select,loci_select1)
+  loci_select1
 }

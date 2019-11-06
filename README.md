@@ -19,8 +19,3 @@ Scripts are a combination of bash command line code (summarized in Rmarkdown fil
 5. COLONY_file_creation
 6. GENEPOP_file_creation
 
-
-
-
-
-
