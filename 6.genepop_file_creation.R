@@ -22,6 +22,9 @@ gt <- gt %>%
   select(SNP_name,PM_OCQ_001:PM_BMR_1089) %>% 
   gather(key = "Indiv",value = gt,-SNP_name)
 
+genepop <- vcf_genepop(vcf = vcf)
+
+
 
 
 
