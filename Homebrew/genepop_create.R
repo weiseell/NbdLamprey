@@ -10,8 +10,8 @@ genepop_create <- function(SNPs,df,output_file = "genepop_file.txt",title){
   cat(title,file = output_file,sep = "\n",append = T)
   #making SNP name section, which is a list of SNPs, one per line
   tmp <- colnames(SNPs)
-  cat(tmp,file = output_file,sep = "\n",append = T)
-  
+  cat(tmp,file = output_file,sep = ", ",append = T)
+  cat("\n",file = output_file,append = T)
   #adding actual genotypes by population
   tmp <- unique(df$pop)
   i <- 1
@@ -19,7 +19,10 @@ genepop_create <- function(SNPs,df,output_file = "genepop_file.txt",title){
     pop_tmp <- tmp[i]
     df1 <- df %>% 
       filter(pop == pop_tmp) %>% 
-      select(-pop)
+      select(-pop) %>% 
+      mutate(name = paste0(ID,",")) %>% 
+      select(-ID) %>% 
+      select(name,everything())
     cat("POP",file = output_file,sep = "\n",append = T)
     write.table(df1,file = output_file,append = T,quote = F,sep = " ",row.names = F,col.names = F)
   }
