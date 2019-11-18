@@ -6,7 +6,7 @@
 #1. convert selected SNPs from vcf to COLONY format
 #2. subset formatted file into cohorts and create COLONY files
 #libraries
-
+library(tidyverse)
 #homebrew functions
 source("Homebrew/marker_create.R")
 source("Homebrew/vcf_colony.R")
@@ -14,7 +14,7 @@ source("Homebrew/colonydat_create.R")
 
 #load in data
 load(file = "Input/gt_filtered.rda")
-load(file = "Input/gt_summary_targets.rda")
+load(file = "Input/selected_loci_ld_filter.rda")
 
 #convert data from vcf to COLONY format
 #removing specialized names for generic loci names

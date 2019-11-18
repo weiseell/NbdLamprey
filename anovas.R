@@ -25,11 +25,26 @@ plot.design(data = bmr3_2018,Length~as.factor(family)+as.factor(reach))
 
 boxplot(bmr3_2017$Length~bmr3_2017$family*bmr3_2017$reach,col = bmr3_2017$reach)
 
-par(mfrow=c(2,1))
-boxplot(bmr3_2018$Length~bmr3_2018$family, col = "darkorange",las = 2)
-boxplot(bmr3_2017$Length~bmr3_2017$family, col = "purple",las = 2)
-boxplot(bmr3$Length~bmr3$Year_collect, col = "darkblue")
+tiff(file="Output/bmr_2018_length_family.tiff",width=6, height=4, units="in", res=200)
+boxplot(bmr3_2018$Length~bmr3_2018$family, col = "darkorange",
+        main = "Black Mallard length distribution by family \n2018 Collection",
+        xlab = "family",
+        ylab = "length (mm)")
+dev.off()
 
+tiff(file="Output/bmr_2017_length_family.tiff",width=6, height=4, units="in", res=200)
+boxplot(bmr3_2017$Length~bmr3_2017$family, col = "purple",
+        main = "Black Mallard length distribution by family \n2017 Collection",
+        xlab = "family",
+        ylab = "length (mm)")
+dev.off()
+
+tiff(file="Output/bmr_length_year.tiff",width=6, height=4, units="in", res=200)
+boxplot(bmr3$Length~bmr3$Year_collect, col = "darkblue",
+        main = "Black Mallard length distributions \n  by collection year",
+        xlab = "Year",
+        ylab = "length (mm)")
+dev.off()
 par(mfrow=c(3,1))
 boxplot(bmr3_2018$Length~bmr3_2018$Father, col = "darkorange")
 boxplot(bmr3_2017$Length~bmr3_2017$Father, col = "purple")

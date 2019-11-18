@@ -3,6 +3,7 @@
 
 #Inputs:
 #vcf = data frame, genotype file with generic loci names in vcf format
+#three columns: Indiv,SNP, and gt
 #empty = logical, if T runs additional section that eliminates individuals with no genotypes
 
 vcf_genepop <- function(vcf,empty = T){
@@ -13,13 +14,13 @@ vcf_genepop <- function(vcf,empty = T){
   vcf$gt <- gsub(pattern = "\\./\\.",replacement = "0000",x = vcf$gt)
   
   genepop <- vcf %>%
-    spread(key = SNP_name,value = gt)
+    spread(key = SNP,value = gt)
   if(empty == T){
     genepop1 <- genepop %>% 
-      gather(key = locus,value = gt, -Indiv)
+      gather(key = locus,value = gt, -ID)
     genepop1 <- genepop1 %>% 
       mutate(gtcheck = ifelse(genepop1$gt == "0",0,1)) %>% 
-      group_by(Indiv) %>% 
+      group_by(ID) %>% 
       summarise(sums = sum(gtcheck),
                 empty = ifelse(sums == 0,T,F))
     
