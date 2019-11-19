@@ -11,6 +11,7 @@
 #homebrew functions
 source("Homebrew/PwoP.R")
 source("Homebrew/PwoP_boot.R")
+
 #load in data
 bmr_colony <- read.table("Input/colony.bestconfig.bmr.txt",header = T,sep = "\t",stringsAsFactors = F)
 che_colony <- read.table("Input/colony.bestconfig.che.txt",header = T,sep = "\t",stringsAsFactors = F)

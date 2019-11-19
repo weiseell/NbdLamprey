@@ -10,7 +10,7 @@ library(tidyverse)
 
 #homebrew functions
 source("Homebrew/vcf_genepop.R")
-
+source("Homebrew/genepop_create.R")
 #load in data
 load(file = "Input/gt_filtered.rda")
 load(file = "Input/tag_selected_SNPs.rda")
@@ -19,10 +19,10 @@ df <- read.table(file = "Input/exp_lengths_weights.txt",header = T,sep = "\t",st
 gt <- merge(SNP_selected,geno)
 gt1 <- gt %>% 
   select(-het:-MAF) %>% 
-  mutate(SNP_name = paste0("SNP",1:nrow(gt))) %>% 
+  mutate(SNP = paste0("SNP",1:nrow(gt))) %>% 
   select(-CHROM:-target) %>% 
-  select(SNP_name,PM_OCQ_001:PM_BMR_1089) %>% 
-  gather(key = "Indiv",value = gt,-SNP_name)
+  select(SNP,PM_OCQ_001:PM_BMR_1089) %>% 
+  gather(key = "ID",value = gt,-SNP)
 
 genepop <- vcf_genepop(vcf = gt1)
 
@@ -72,5 +72,16 @@ che_snps <- che_gp %>% select(-pop:-ID)
 genepop_create(SNPs = che_snps,df = che_gp,output_file = "pm.che.genepop.txt",
                title = "Genotyped SNPs on Rapture tag panel for P.Marinus larvae - Cheboygan River")
 
+#ocqueoc
+ocq_gp <- genepop1 %>% 
+  mutate(ID2 = ID) %>%
+  separate(ID2,into = c("spp","loc","num"),sep = "_") %>% 
+  filter(loc == "OCQ") %>% 
+  mutate(pop = "pop1") %>% 
+  select(-spp:-num) %>% 
+  select(pop,ID,SNP1:SNP999)
+ocq_snps <- ocq_gp %>% select(-pop:-ID)
+genepop_create(SNPs = ocq_snps,df = ocq_gp,output_file = "pm.ocq.genepop.txt",
+               title = "Genotyped SNPs on Rapture tag panel for P.Marinus larvae - Ocqueoc River")
 
 

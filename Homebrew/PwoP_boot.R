@@ -15,7 +15,7 @@ PwoP_boot <- function(family,iter,alpha,real_Nb){
   }
   
   #constructing confidence intervals for the bootstrapped values
-  se_boot_Nb <- sd(boot_Nb)
+  se_boot_Nb <- sd(boot_Nb)/sqrt(n_fam)
   cv_boot_Nb <- qnorm(alpha/2,lower.tail=FALSE)
   
   conf_int <- real_Nb+c(-1,1)*se_boot_Nb*cv_boot_Nb

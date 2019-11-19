@@ -10,16 +10,18 @@ PwoP <- function(family){
   family$FatherID <- paste0("Dad",family$FatherID)
   family$MotherID <- paste0("Mom",family$MotherID)
   #making k matrix - number of offspring for each parent
-  dadcounts <- as.vector(table(family$FatherID))
-  momcounts <- as.vector(table(family$MotherID))
-  moms <- data.frame(parent = unique(family$MotherID),k = momcounts,stringsAsFactors = F)
-  dads <- data.frame(parent = unique(family$FatherID),k = dadcounts,stringsAsFactors = F)
+  dadcounts <- table(family$FatherID)
+  momcounts <- table(family$MotherID)
+  moms <- data.frame(parent = names(momcounts),k = as.vector(momcounts),stringsAsFactors = F)
+  dads <- data.frame(parent = names(dadcounts),k = as.vector(dadcounts),stringsAsFactors = F)
   parents <- rbind(moms,dads)
   
   #calculating Nb from parent counts
   parents$k2 <- parents$k^2
+  N <- length(unique(parents$parent))
+  Vk <- (sum(parents$k2)/N)-((sum(parents$k)/N)^2)
   Nb <- (sum(parents$k)-1)/((sum(parents$k2)/sum(parents$k))-1)
-  Nb
+  c(Vk,Nb)
 }
 
 
