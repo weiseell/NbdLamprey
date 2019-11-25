@@ -18,6 +18,7 @@ source("Homebrew/match_tags.R")
 load(file = "Input/MAF_clean.rda")
 load(file = "Input/gt_filtered.rda")
 load(file = "Input/rapture_panel_all_SNPs.rda")
+load(file = "Input/gdepth_filtered_111619.rda")
 
 #Goal 1
 #calculating %coverage, heterozygosity for all loci
@@ -52,6 +53,8 @@ rapture1 <- rapture1 %>%
 SNPs <- geno1 %>% select(CHROM,POS)
 
 geno2 <- match_tags(SNPs = SNPs,tags = rapture1,target = T)
+
+#counting the number of reads that are on target
 
 
 #save two main outputs from this script into the input folder

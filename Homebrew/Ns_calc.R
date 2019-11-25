@@ -3,32 +3,33 @@
 
 #Inputs:
 #family - best config file (has four columns: OffspringID, FatherID, MotherID, and ClusterIndex)
-#step - integer for the step size of the subset size (default is 50)
-#reps - integer for the number of replicates at each step (default is 100)
-Ns_calc <- function(family,step = 50,reps = 100){
-  #selecting the sample size of individuals
-  steps <- seq(from = step,to = length(family$OffspringID),by = step)
-  #empty matrix to store parents
-  min_parents <- data.frame(matrix(NA,nrow = length(steps),ncol = 2))
-  colnames(min_parents) <- c("noff","npar")
-  i <- 1
-  j <- 1
-  for (i in 1:length(steps)) {
-    size <- steps[i]
-    parents <- vector()
-    for (j in 1:reps) {
-      #randomly choosing offspring
-      tmp <- sample.int(length(family$OffspringID),size = size)
-      df <- family[tmp,]
-      #getting the number of parents for the subsetted offspring
-      nparents <- length(unique(df$MotherID))+length(unique(df$FatherID))
-      parents <- append(parents,nparents)
-    }
-    min_parents$noff[i] <- size
-    #getting the mean number of parents for each subset size
-    min_parents$npar[i] <- mean(parents)
+Ns_calc <- function(family){
+  require(vegan)
+  family$FatherID <- paste0("Dad",family$FatherID)
+  family$MotherID <- paste0("Mom",family$MotherID)
+  #making matrix for dads
+  dads <- data.frame(matrix(0,nrow = length(family$OffspringID),ncol = length(unique(family$FatherID))))
+  colnames(dads) <- unique(family$FatherID)
+  rownames(dads) <- family$OffspringID
+  #making matrix for moms
+  moms <- data.frame(matrix(0,nrow = length(family$OffspringID),ncol = length(unique(family$MotherID))))
+  colnames(moms) <- unique(family$MotherID)
+  rownames(moms) <- family$OffspringID
+  
+  #loop to fill in matrix with parents
+  for (i in 1:length(family$OffspringID)) {
+    off <- family[i,]
+    dadn <- which(off$FatherID == colnames(dads))
+    dads[i,dadn] <- 1
   }
-  min_parents
+  for (i in 1:length(family$OffspringID)) {
+    off <- family[i,]
+    momn <- which(off$MotherID == colnames(moms))
+    moms[i,momn] <- 1
+  }
+  parents <- cbind(moms,dads)
+  ns_points <- specaccum(parents)
+  asymp <- specpool(parents)
+  output <- list(ns_points,asymp)
+  output
 }
-
-

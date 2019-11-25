@@ -20,8 +20,8 @@ load(file = "Input/gt_summary_with_targets.rda")
 
 #filtering for target and gt coverage
 geno2 <- geno1 %>% 
-  filter(target != "NonTarget")
-
+  filter(target != "NonTarget") %>% 
+  filter(MAF > 0.05)
 #selecting SNP set
 SNP_selected <- tag_filter(df = geno2)
 

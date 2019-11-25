@@ -11,7 +11,8 @@ PwoP_boot <- function(family,iter,alpha,real_Nb){
   i <- 1
   for (i in 1:iter) {
     tmp <- family[sample(n_fam,n_fam,replace = T),]
-    boot_Nb[i] <- PwoP(tmp)
+    tmp1 <- PwoP(tmp)
+    boot_Nb[i] <- tmp1$Nb
   }
   
   #constructing confidence intervals for the bootstrapped values

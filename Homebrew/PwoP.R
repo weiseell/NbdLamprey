@@ -20,8 +20,12 @@ PwoP <- function(family){
   parents$k2 <- parents$k^2
   N <- length(unique(parents$parent))
   Vk <- (sum(parents$k2)/N)-((sum(parents$k)/N)^2)
+  kbar <- mean(parents$k)
   Nb <- (sum(parents$k)-1)/((sum(parents$k2)/sum(parents$k))-1)
-  c(Vk,Nb)
+  out <- data.frame(matrix(NA,nrow = 1,ncol = 3))
+  colnames(out) <- c("Nb","kbar","Vk")
+  out[1,] <- c(Nb,kbar,Vk)
+  out
 }
 
 

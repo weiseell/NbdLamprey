@@ -9,6 +9,7 @@
 #libraries
 library(tidyverse)
 library(anchors)
+
 #homebrew functions
 
 
@@ -17,7 +18,7 @@ load(file = "Input/gt_summary_with_targets.rda")
 load(file = "Input/selected_loci_ld_filter_summary.rda")
 load(file = "Input/tag_selected_SNPs.rda")
 load(file = "Input/rapture_panel_all_SNPs.rda")
-load(file = "Input/gdepth_filtered.rda")
+
 #getting depth per SNP and combining with all summaries
 gdepth1 <- gdepth %>% mutate(ID = paste0(CHROM,"_",POS))
 
@@ -44,6 +45,20 @@ loci_select_summ <- merge(loci_select_summ,depth_summ)
 
 SNP_selected <- SNP_selected %>% mutate(ID = paste0(CHROM,"_",POS))
 SNP_selected <- merge(SNP_selected,depth_summ)
+
+#calculating proportion of reads that are on target
+gdepth2 <- gdepth1 %>% spread(key = indiv,value = depth)
+target <- geno1 %>% 
+  mutate(ID = paste0(CHROM,"_",POS))
+target <- data.frame(ID = target$ID,target = target$target,stringsAsFactors = F)
+target_SNPs <- target %>% 
+  filter(target != "NonTarget")
+gdepth2 <- merge(target_SNPs,gdepth2)
+gdepth2 <- gdepth2 %>% 
+  select(-target) %>% 
+  gather(key = "OffspringID",value = "depth",-ID)
+sum(gdepth1$depth)
+sum(gdepth2$depth)
 #filtering for on-target to compare
 geno2 <- geno1 %>% 
   filter(target != "NonTarget")

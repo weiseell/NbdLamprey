@@ -7,7 +7,6 @@
 
 tag_filter <- function(df){
   tags <- unique(df$target)
-  
   #making a matrix for the SNPs full of NAs to be filled in
   SNPs  <- data.frame(matrix(data = NA,nrow = length(tags),ncol = ncol(df)))
   rownames(SNPs) <- tags

@@ -13,8 +13,9 @@ library(mclust)
 source("mixture_function.R")
 #loading in data
 df <- read.table("input/exp_lengths_weights_081219.txt",header = T, stringsAsFactors = F)
-che_colony <- read.table("Input/colony.bestconfig.che.txt",header = T,sep = "\t")
-bmr_colony <- read.table("Input/colony.bestconfig.bmr.txt",header = T)
+che_colony <- read.table("Input/colony.bestconfig.che.txt",header = T,sep = "\t",stringsAsFactors = F)
+bmr_colony <- read.table("Input/colony.bestconfig.bmr.txt",header = T,stringsAsFactors = F)
+ocq_colony <- read.table("Input/colony.bestconfig.ocq.txt",header = T,stringsAsFactors = F)
 #subsetting for locations and year collected
 #separating ID into species, location, and individual number
 df <- df %>% separate(ID_indiv, into = c("species","loc","num"),sep = "_") %>% 
@@ -37,12 +38,16 @@ ocq18_mix <- mixture(ocq18, pop = "OCQ_18")
 ocq19_mix <- mixture(ocq19, pop = "OCQ_19")
 
 #make graphs and determine length ranges for each cohort for each group
-ggplot(ocq18_mix[[2]], aes(x=V1,fill = class)) +
-  geom_histogram(bins = 50) +
-  labs(x="Length (mm)")+
+ggplot(ocq18_mix[[2]], aes(x=V1, y=V2,color = class)) +
+  geom_point(aes(color = factor(class))) +
+  scale_color_manual(values = c("#2ca25f","#2c7fb8","#810f7c"),
+                     name = "Age",
+                     labels = c("3", "2","1"),
+                     guide = guide_legend(reverse = TRUE))+
+  labs(x="Length (mm)", y="Weight (g)")+
   theme_bw(base_size = 12)+
   ggtitle("Age Classifications for Ocqueoc River Individuals - 2018 cohort")
-#age 1 cutoff - 40mm, age 2 cutoff - 60mm
+#age 2 cutoff - 100mm
 
 ggplot(bmr19_mix[[2]], aes(x=V1, y=V2,color = class)) +
   geom_point(aes(color = factor(class))) +
@@ -67,7 +72,14 @@ ggplot(bmr17_mix[[2]], aes(x=V1, fill = class)) +
   labs(x="Length (mm)")+
   theme_bw(base_size = 12)+
   ggtitle("Age Classifications for Black Mallard River Individuals - 2017 cohort")
-
+ggplot(bmr17_mix[[2]], aes(x=V1, y=V2,color = class)) +
+  geom_point(aes(color = factor(class))) +
+  scale_color_manual(values = c("#2ca25f","#2c7fb8","#810f7c"),
+                     name = "Age",
+                     labels = c("4","3", "2","1"),
+                     guide = guide_legend(reverse = TRUE))+
+  labs(x="Length (mm)", y="Weight (g)")+
+  theme_bw(base_size = 12)
 #age 0 - 32mm, age 1 - 75mm, age 2 - 100mm
 
 ggplot(che18_mix[[2]], aes(x=V1, y=V2,color = class)) +
@@ -81,13 +93,12 @@ ggplot(che18_mix[[2]], aes(x=V1, y=V2,color = class)) +
   ggtitle("Age Classifications for Cheboygan River Individuals - 2018 cohort")
 #age 1 - 69mm, age 2 - 119mm
 
-cutoffs <- data.frame(loc = as.character(c("BMR","BMR","BMR","BMR","BMR","BMR","BMR","BMR","CHE","CHE","CHE")),
-           year = c(2017,2017,2017,2017,2018,2018,2018,2018,2018,2018,2018),
-           age = c(0,1,2,3,1,2,3,4,1,2,3),
-           min = as.integer(c(0,33,76,101,0,61,89,114,0,70,119)),
-           max = as.integer(c(32,75,100,125,60,88,113,134,69,119,146)))
+cutoffs <- data.frame(loc = as.character(c("BMR","BMR","BMR","BMR","BMR","BMR","CHE","CHE","CHE","OCQ","OCQ")),
+           year = c(2017,2017,2017,2018,2018,2018,2018,2018,2018,2018,2018),
+           age = c(0,1,2,1,2,3,1,2,3,2,3),
+           min = as.integer(c(0,33,76,0,61,89,0,70,119,0,100)),
+           max = as.integer(c(32,75,125,60,88,134,69,119,146,100,160)))
 cutoffs$rep_year <- cutoffs$year - cutoffs$age
-df1 <- subset(df,df$loc == "CHE" | df$loc == "BMR")
 
 i <- 1
 j <- 1
@@ -106,6 +117,7 @@ for (i in 1:length(df1$species)) {
 
 bmr <- subset(df1,df1$loc == "BMR")
 che <- subset(df1,df1$loc == "CHE")
+ocq <- subset(df1,df1$loc == "OCQ")
 che <- che %>% 
   mutate(ID = paste(species,loc,num,sep = "_")) %>% 
   select(-Sample_number:-num) %>% 
@@ -128,9 +140,15 @@ bmr1 <-  merge(bmr,bmr_colony)
 bmr2 <- bmr1 %>% 
   arrange(Year_collect,desc(Length),Father,Mother)
 
-
-
-
+ocq <- ocq %>% 
+  mutate(ID = paste(species,loc,num,sep = "_")) %>% 
+  select(-Sample_number:-num) %>% 
+  rename(Length = V1,Weight = V2) %>% 
+  select(ID,Year_collect:cohort)
+colnames(ocq_colony) <-  c("ID", "Father","Mother","Cluster")
+ocq1 <- merge(ocq,ocq_colony)
+ocq2 <- ocq1 %>% 
+  arrange(desc(Length))
 #separating out reaches
 bmr2 <- bmr1 %>% 
   mutate(ID2 = ID) %>% 
@@ -154,8 +172,6 @@ for (i in 1:length(bmr2$num)) {
   }
   
 }
-
-#look at boxplots of individual heterozygosity
 
 
 
