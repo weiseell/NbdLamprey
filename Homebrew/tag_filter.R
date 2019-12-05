@@ -6,6 +6,7 @@
 #df: a dataframe containing targeted SNP names and percent genotyped
 
 tag_filter <- function(df){
+  require(tidyverse)
   tags <- unique(df$target)
   #making a matrix for the SNPs full of NAs to be filled in
   SNPs  <- data.frame(matrix(data = NA,nrow = length(tags),ncol = ncol(df)))
@@ -19,8 +20,8 @@ tag_filter <- function(df){
     SNP_pick <- tmp %>% 
       mutate(rvar = runif(n = nrow(tmp))) %>% 
       arrange(desc(pGT),rvar) %>% 
-      slice(1) %>% 
-      select(-rvar)
+      slice(1)
+    SNP_pick$rvar <- NULL
     SNPs[i,] <- SNP_pick
   }
   SNPs

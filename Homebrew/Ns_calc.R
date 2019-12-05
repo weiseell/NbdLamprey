@@ -28,8 +28,10 @@ Ns_calc <- function(family){
     moms[i,momn] <- 1
   }
   parents <- cbind(moms,dads)
-  ns_points <- specaccum(parents)
+  Ns <- as.matrix(ncol(parents))
+  colnames(Ns) <- "Ns"
+  ns_points <- specaccum(parents,method = "random")
   asymp <- specpool(parents)
-  output <- list(ns_points,asymp)
+  output <- list(ns_points,asymp,Ns)
   output
 }

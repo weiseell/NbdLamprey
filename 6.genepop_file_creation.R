@@ -16,6 +16,8 @@ load(file = "Input/gt_filtered.rda")
 load(file = "Input/tag_selected_SNPs.rda")
 load(file = "Input/bmr_cohort_data.txt")
 bmr <- bmr %>% mutate(ID = paste0(species,"_",loc,"_",num)) %>% select(ID,cohort)
+ocq <- read.table(file = "Input/ocq_cohort_info.txt",sep = "\t",header = T,stringsAsFactors = F)
+che <- read.table(file = "Input/che_cohort_info.txt",sep = "\t",header = T,stringsAsFactors = F)
 df <- read.table(file = "Input/exp_lengths_weights.txt",header = T,sep = "\t",stringsAsFactors = F)
 locs <- read.table("Input/locs_and_sublocations.txt",header = T,sep = "\t",stringsAsFactors = F)
 
@@ -101,7 +103,7 @@ genepop_create(SNPs = bmr_snps,df = bmr_gp,output_file = "Output/pm.bmr.genepop.
 ##Cheboygan#####
 colnames(locs) <- c("ID","loc","sub.loc")
 locs <- locs %>% select(ID,sub.loc)
-che <- che %>% select(ID,cohort)
+che <- che %>% select(OffspringID,cohort) %>% rename(ID = OffspringID)
 genepop1 <- merge(genepop,locs)
 genepop2 <- merge(genepop1,che)
 #Pigeon River - 2016 cohort#####

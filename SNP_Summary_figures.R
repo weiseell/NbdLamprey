@@ -117,3 +117,13 @@ boxplot(geno1$depth_mean,geno2$depth_mean,geno3$depth_mean,loci_select_summ$dept
         ylab = "Average Depth")
 dev.off()
 
+#frequency histograms of MAF for each subset
+par(mfrow = c(2,2),mar=c(5,7,4,2),mgp = c(3.5,1,0),las = 1,cex.main = 0.95)
+hist(geno1$MAF,main = "Frequency histogram of MAF - \nall SNPs",
+     xlab = "MAF",breaks = 50,xlim = c(0,0.5),col = "grey")
+hist(geno2$MAF,main = "Frequency histogram of MAF - \nOn-Target SNPs",
+     xlab = "MAF",breaks = 50,xlim = c(0,0.5),col = "grey")
+hist(loci_select_summ$MAF,main = "Frequency histogram of MAF - \nSNPs for SF and PwoP methods",
+     xlab = "MAF",breaks = 50,xlim = c(0,0.5),col = "grey")
+hist(SNP_selected$MAF,main = "Frequency histogram of MAF - \nSNPs for LD method",
+     xlab = "MAF",breaks = 50,xlim = c(0,0.5),col = "grey")

@@ -11,6 +11,7 @@ library(mclust)
 
 #loading in my functions
 source("mixture_function.R")
+source("Homebrew/multiplot.R")
 #loading in data
 df <- read.table("input/exp_lengths_weights_081219.txt",header = T, stringsAsFactors = F)
 che_colony <- read.table("Input/colony.bestconfig.che.txt",header = T,sep = "\t",stringsAsFactors = F)
@@ -37,62 +38,110 @@ che18_mix <- mixture(che18, pop = "CHE_18")
 ocq18_mix <- mixture(ocq18, pop = "OCQ_18")
 ocq19_mix <- mixture(ocq19, pop = "OCQ_19")
 
-#make graphs and determine length ranges for each cohort for each group
-ggplot(ocq18_mix[[2]], aes(x=V1, y=V2,color = class)) +
+#make graphs and determine length ranges for each cohort for each group ####
+#OCQ
+ocq_plot1 <- ggplot(ocq18_mix[[2]], aes(x=V1, y=V2,color = class)) +
   geom_point(aes(color = factor(class))) +
-  scale_color_manual(values = c("#2ca25f","#2c7fb8","#810f7c"),
+  scale_color_manual(values = c("#2c7fb8","#41b6c4","#253494"),
                      name = "Age",
-                     labels = c("3", "2","1"),
-                     guide = guide_legend(reverse = TRUE))+
+                     labels = c("3", "2","4"),
+                     guide = F)+
   labs(x="Length (mm)", y="Weight (g)")+
-  theme_bw(base_size = 12)+
-  ggtitle("Age Classifications for Ocqueoc River Individuals - 2018 cohort")
-#age 2 cutoff - 100mm
-
-ggplot(bmr19_mix[[2]], aes(x=V1, y=V2,color = class)) +
-  geom_point(aes(color = factor(class))) +
-  scale_color_manual(values = c("#2ca25f","#2c7fb8","#810f7c"),
-                     name = "Age",
-                     labels = c("3", "2","1"),
-                     guide = guide_legend(reverse = TRUE))+
-  labs(x="Length (mm)", y="Weight (g)")+
-  theme_bw(base_size = 12)+
-  ggtitle("Age Classifications for Black Mallard River Individuals - 2019 cohort")
-#only one cohort  -  age 3+?
-
-ggplot(bmr18_mix[[2]], aes(x=V1, fill = class)) +
+  theme_bw(base_size = 8)+
+  ggtitle("Age Classifications for Ocqueoc River Individuals")
+ocq_plot2 <- ggplot(ocq18_mix[[2]], aes(x=V1, fill = class)) +
   geom_histogram(aes(fill = factor(class)),bins = 100) +
+  scale_fill_manual(values = c("#2c7fb8","#41b6c4","#253494"),
+                     name = "Age",
+                     labels = c("3", "2","4"),
+                     guide = guide_legend(reverse = FALSE))+
+  labs(x="Length (mm)", y="counts")+
+  theme_bw(base_size = 8)+
+  ggtitle("Age Classifications for Ocqueoc River Individuals")
+
+#BMR - 2019 collection
+bmr19_plot1 <- ggplot(bmr19_mix[[2]], aes(x=V1, y=V2,color = class)) +
+  geom_point(aes(color = factor(class))) +
+  scale_color_manual(values = c("#2c7fb8"),
+                     name = "Age",
+                     labels = c("3"),
+                     guide = F) +
+  labs(x="Length (mm)", y="Weight (g)") +
+  theme_bw(base_size = 8) +
+  ggtitle("Age Classifications for Black Mallard River Individuals - \n2019 collection")
+bmr19_plot2 <- ggplot(bmr19_mix[[2]], aes(x=V1, fill = class)) +
+  geom_histogram(aes(fill = factor(class)),bins = 20) +
+  scale_fill_manual(values = c("#2c7fb8"),
+                     name = "Age",
+                     labels = c("3"))+
+  labs(x="Length (mm)", y="counts")+
+  theme_bw(base_size = 8)+
+  ggtitle("Age Classifications for Black Mallard River Individuals - \n2019 collection")
+
+#BMR - 2018 collection
+bmr18_plot1 <- ggplot(bmr18_mix[[2]], aes(x=V1, y=V2,color = class)) +
+  geom_point(aes(color = factor(class))) +
+  scale_color_manual(values = c("#2c7fb8","#41b6c4","#a1dab4"),
+                     name = "Age",
+                     labels = c("3", "2","1"),
+                     guide = F)+
   labs(x="Length (mm)", y="Weight (g)")+
-  theme_bw(base_size = 12)+
-  ggtitle("Age Classifications for Black Mallard River Individuals - 2018 cohort")
+  theme_bw(base_size = 8)+
+  ggtitle("Age Classifications for Black Mallard River Individuals - \n2018 collection")
+bmr18_plot2 <- ggplot(bmr18_mix[[2]], aes(x=V1, fill = class)) +
+  geom_histogram(aes(fill = factor(class)),bins = 100) +
+  scale_fill_manual(values = c("#2c7fb8","#41b6c4","#a1dab4"),
+                     name = "Age",
+                     labels = c("3", "2","1"),
+                     guide = guide_legend(reverse = TRUE))+
+  labs(x="Length (mm)", y="counts")+
+  theme_bw(base_size = 8)+
+  ggtitle("Age Classifications for Black Mallard River Individuals - \n2018 collection")
 #age 1 - 60mm, age 2 - 88mm, age 3 - 113mm
 
-ggplot(bmr17_mix[[2]], aes(x=V1, fill = class)) +
-  geom_histogram(aes(fill = factor(class)),bins = 100) +
-  labs(x="Length (mm)")+
-  theme_bw(base_size = 12)+
-  ggtitle("Age Classifications for Black Mallard River Individuals - 2017 cohort")
-ggplot(bmr17_mix[[2]], aes(x=V1, y=V2,color = class)) +
+bmr17_plot1 <- ggplot(bmr17_mix[[2]], aes(x=V1, y=V2,color = class)) +
   geom_point(aes(color = factor(class))) +
-  scale_color_manual(values = c("#2ca25f","#2c7fb8","#810f7c"),
-                     name = "Age",
-                     labels = c("4","3", "2","1"),
-                     guide = guide_legend(reverse = TRUE))+
+  scale_color_manual(values = c("#c7e9b4","#7fcdbb","#41b6c4","#2c7fb8"),
+                    name = "Age",
+                    labels = c("0", "1","2","3"),
+                    guide = F)+
   labs(x="Length (mm)", y="Weight (g)")+
-  theme_bw(base_size = 12)
+  theme_bw(base_size = 8) +
+  ggtitle("Age Classifications for Black Mallard River Individuals - \n2017 collection")
+bmr17_plot2 <- ggplot(bmr17_mix[[2]], aes(x=V1, fill = class)) +
+  geom_histogram(aes(fill = factor(class)),bins = 100) +
+  scale_fill_manual(values = c("#c7e9b4","#7fcdbb","#41b6c4","#2c7fb8"),
+                     name = "Age",
+                     labels = c("0", "1","2","3"),
+                     guide = guide_legend(reverse = TRUE))+
+  labs(x="Length (mm)")+
+  theme_bw(base_size = 8)+
+  ggtitle("Age Classifications for Black Mallard River Individuals - \n2017 collection")
 #age 0 - 32mm, age 1 - 75mm, age 2 - 100mm
 
-ggplot(che18_mix[[2]], aes(x=V1, y=V2,color = class)) +
+che_plot1 <- ggplot(che18_mix[[2]], aes(x=V1, y=V2,color = class)) +
   geom_point(aes(color = factor(class))) +
-  scale_color_manual(values = c("#2ca25f","#2c7fb8","#810f7c"),
+  scale_color_manual(values = c("#7fcdbb","#41b6c4","#2c7fb8"),
                      name = "Age",
-                     labels = c("3", "2","1"),
-                     guide = guide_legend(reverse = TRUE))+
+                     labels = c("1", "2","3"),
+                     guide = F)+
   labs(x="Length (mm)", y="Weight (g)")+
-  theme_bw(base_size = 12)+
-  ggtitle("Age Classifications for Cheboygan River Individuals - 2018 cohort")
+  theme_bw(base_size = 8)+
+  ggtitle("Age Classifications for Cheboygan River")
+che_plot2 <- ggplot(che18_mix[[2]], aes(x=V1, fill = class)) +
+  geom_histogram(aes(fill = factor(class)),bins = 100) +
+  scale_fill_manual(values = c("#7fcdbb","#41b6c4","#2c7fb8"),
+                     name = "Age",
+                     labels = c("1", "2","3"),
+                     guide = guide_legend(reverse = FALSE))+
+  labs(x="Length (mm)", y="counts")+
+  theme_bw(base_size = 8)+
+  ggtitle("Age Classifications for Cheboygan River")
 #age 1 - 69mm, age 2 - 119mm
+#putting all 10 plots together
+multiplot(che_plot1,bmr17_plot1,bmr18_plot1,bmr19_plot1,ocq_plot1,che_plot2,bmr17_plot2,bmr18_plot2,bmr19_plot2,ocq_plot2,cols = 2)
 
+#making cutoffs and splitting into cohorts####
 cutoffs <- data.frame(loc = as.character(c("BMR","BMR","BMR","BMR","BMR","BMR","CHE","CHE","CHE","OCQ","OCQ")),
            year = c(2017,2017,2017,2018,2018,2018,2018,2018,2018,2018,2018),
            age = c(0,1,2,1,2,3,1,2,3,2,3),
@@ -102,6 +151,7 @@ cutoffs$rep_year <- cutoffs$year - cutoffs$age
 
 i <- 1
 j <- 1
+df1 <- df
 df1$cohort <- NA
 for (i in 1:length(df1$species)) {
   tmp <- df1[i,]
