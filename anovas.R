@@ -66,14 +66,14 @@ boxplot(ocq4$Length~ocq4$family,las = 2,
 
 tiff(file="Output/family_plots.tiff",width=6, height=4, units="in", res=200)
 par(mfrow = c(2,2))
-boxplot(bmr3_2018$Length~bmr3_2018$family, las = 2,
-        main = "A) Black Mallard length distribution by family \n2018 Collection",
+boxplot(bmr3_2017$Length~bmr3_2017$family, las = 2,
+        main = "A) Black Mallard length distribution by family \n2017 Collection",
         xlab = "family",
         ylab = "length (mm)",
         ylim = c(0,130),
         cex.axis = 0.6)
-boxplot(bmr3_2017$Length~bmr3_2017$family, las = 2,
-        main = "B) Black Mallard length distribution by family \n2017 Collection",
+boxplot(bmr3_2018$Length~bmr3_2018$family, las = 2,
+        main = "B) Black Mallard length distribution by family \n2018 Collection",
         xlab = "family",
         ylab = "length (mm)",
         ylim = c(0,130),
@@ -92,6 +92,8 @@ boxplot(ocq4$Length~ocq4$family,las = 2,
 dev.off()
 
 #visualizing families by cohort in pie charts to demonstrate mixing of cohorts
+cp <- coord_polar(theta = "y")
+cp$is_free <- function() TRUE
 #black mallard
 counts1 <- bmr3 %>% 
   group_by(family,cohort) %>% 

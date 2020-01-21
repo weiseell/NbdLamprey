@@ -1,11 +1,10 @@
 # NbdLamprey
-Pipeline to process rapture genotypes from a raw vcf file to filtered SNP sets for Nb/Ns estimates in COLONY and NeEstimator
+Pipeline to process rapture genotypes from a raw vcf file to filtered SNP sets for Nb/Ns estimates in COLONY and NeEstimator. Contains a test data set to work through all of the scripts before scaling up for a large population. There is a markdown tutorial with more details about scripts as well as output summaries for the test data set.
 
 ## Guide to navigating repository
 ### Folder overviews:
-Input: contains initial data and intermediate data frame outputs used as inputs in later scripts
-	Note: Input folder will remain empty until after publication to protect project data, after publication a test population will be added
-Output: will contain final file outputs of the pipeline as well as several figures throughout pipeline that are generated
+Input: initial inputs for the pipeline (pre-processed by VCFtools)
+
 Homebrew: contains all the user-created functions that are used in the pipeline
 
 

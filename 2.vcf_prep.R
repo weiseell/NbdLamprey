@@ -35,7 +35,7 @@ for(i in 1:length(af$Maj_AF)){
 max(af$Min_AF2)
 MAF <- af$Min_AF2
 
-geno1 <- gt_SNP_stats(gt = geno,MAF = MAF, n_indiv = 1536,hetfilter = T)
+geno1 <- gt_SNP_stats(gt = geno, MAF = MAF, n_indiv = 1536,hetfilter = T)
 
 ##matching acceptable loci with Rapture panel
 #matching genotypes to rapture panel

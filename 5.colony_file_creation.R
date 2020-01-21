@@ -27,6 +27,9 @@ col1 <- loci_select %>%
 
 #converting vcf to colony
 col2 <- vcf_colony(vcf = col1)
+
+#doing a PCA to look for brook lamprey outliers
+loci_select1 <- loci_select %>% select(-CHROM:-target)
 col2 <- merge(col2,locs)
 bmr <- bmr %>% 
   select(-Sample_number) %>% 

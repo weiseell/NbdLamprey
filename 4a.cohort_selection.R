@@ -1,8 +1,5 @@
 #separating expansion locations into cohorts
 
-#setting working directory
-setwd("/Users/ellenweise/OneDrive - Michigan State University/Documents/Sea_Lamprey_MS_project/mixture_analysis")
-
 #loading libraries
 #Note: the requirements are built into the function so you don't need to load this before running,
 #but it's good to have the requirements in case you don't have these packages in R
@@ -10,10 +7,10 @@ library(tidyverse)
 library(mclust)
 
 #loading in my functions
-source("mixture_function.R")
+source("Homebrew/mixture_function.R")
 source("Homebrew/multiplot.R")
 #loading in data
-df <- read.table("input/exp_lengths_weights_081219.txt",header = T, stringsAsFactors = F)
+df <- read.table("Input/exp_lengths_weights_081219.txt",header = T, stringsAsFactors = F)
 che_colony <- read.table("Input/colony.bestconfig.che.txt",header = T,sep = "\t",stringsAsFactors = F)
 bmr_colony <- read.table("Input/colony.bestconfig.bmr.txt",header = T,stringsAsFactors = F)
 ocq_colony <- read.table("Input/colony.bestconfig.ocq.txt",header = T,stringsAsFactors = F)
@@ -28,7 +25,6 @@ bmr18 <- subset(df, df$loc == "BMR" & df$Year_collect == "2018")
 bmr19 <- subset(df, df$loc == "BMR" & df$Year_collect == "2019")
 che18 <- subset(df, df$loc == "CHE" & df$Year_collect == "2018")
 ocq18 <- subset(df, df$loc == "OCQ" & df$Year_collect == "2018")
-ocq19 <- subset(df, df$loc == "OCQ" & df$Year_collect == "2019")
 
 #running the mixture function for all locations and collections
 bmr17_mix <- mixture(bmr17, pop = "BMR_17")
@@ -36,7 +32,6 @@ bmr18_mix <- mixture(bmr18, pop = "BMR_18")
 bmr19_mix <- mixture(bmr19, pop = "BMR_19")
 che18_mix <- mixture(che18, pop = "CHE_18")
 ocq18_mix <- mixture(ocq18, pop = "OCQ_18")
-ocq19_mix <- mixture(ocq19, pop = "OCQ_19")
 
 #make graphs and determine length ranges for each cohort for each group ####
 #OCQ

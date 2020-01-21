@@ -20,9 +20,6 @@ match_tags <- function(SNPs,tags,target = F){
     tmp <- which(tags$CHROM == SNPs$CHROM[i] & as.numeric(tags$min) <= SNPs$POS[i] & as.numeric(tags$max) >= SNPs$POS[i])
     ifelse(length(tmp) > 0,SNPs$target[i] <- tags$ID[tmp], SNPs$target[i] <- "NonTarget")
   }
-  if(target == T){
-    SNPs <- SNPs %>% 
-      filter(target != "NonTarget")
-  }
-  SNPs
+  target <- subset(SNPs,SNPs$target != "NonTarget")
+  list(SNPs,target)
 }
