@@ -13,7 +13,7 @@ source("Homebrew/multiplot.R")
 df <- read.table("Input/exp_lengths_weights_081219.txt",header = T, stringsAsFactors = F)
 che_colony <- read.table("Input/colony.bestconfig.che.txt",header = T,sep = "\t",stringsAsFactors = F)
 bmr_colony <- read.table("Input/colony.bestconfig.bmr.txt",header = T,stringsAsFactors = F)
-ocq_colony <- read.table("Input/colony.bestconfig.ocq.txt",header = T,stringsAsFactors = F)
+bmr_colony <- read.table("Software_outputs/colony.bestconfig.bmr.txt",header = T,stringsAsFactors = F)
 #subsetting for locations and year collected
 #separating ID into species, location, and individual number
 df <- df %>% separate(ID_indiv, into = c("species","loc","num"),sep = "_") %>% 

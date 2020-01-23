@@ -11,7 +11,7 @@ marker_create <- function(SNPs,cod = 0,gte = 0.02,ote = 0.001){
   #making a matrix of zeros of the correct size and adding colnames
   nmarkers <- (length(SNPs)-1)/2
   markers  <- data.frame(matrix(data = 0,nrow = 3,ncol = nmarkers))
-  colnames(markers) <- SNPs[seq(from=2,to = nmarkers*2,by = 2)]
+  colnames(markers) <- SNPs[seq(from=2, to = nmarkers*2,by = 2)]
   
   #filling in matrix
   markers[1,] <- cod #for co-dominant markers

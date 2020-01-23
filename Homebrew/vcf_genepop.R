@@ -17,10 +17,10 @@ vcf_genepop <- function(vcf,empty = T){
     spread(key = SNP,value = gt)
   if(empty == T){
     genepop1 <- genepop %>% 
-      gather(key = locus,value = gt, -ID)
+      gather(key = locus,value = gt, -indiv)
     genepop1 <- genepop1 %>% 
       mutate(gtcheck = ifelse(genepop1$gt == "0",0,1)) %>% 
-      group_by(ID) %>% 
+      group_by(indiv) %>% 
       summarise(sums = sum(gtcheck),
                 empty = ifelse(sums == 0,T,F))
     

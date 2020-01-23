@@ -65,10 +65,13 @@ SNPs <- gt %>%
 
 target <- match_tags(SNPs = SNPs,tags = rapture1,target = T)
 
+#merging target results with summary statistics
+rapture_class <- target[[1]]
+rapture_class <- rapture_class %>% 
+  mutate(ID = paste(CHROM,POS,sep = "_")) %>% 
+  select(ID,everything())
+SNPsumm <- merge(rapture_class,stats)
 #save two main outputs from this script
 #summary stats, target classifications, and on-target SNPs
-rapture_class <- target[[1]]
-targetSNPs <- target[[2]]
-save(rapture_class,file = "Summary_Stats/SNPs_all_rapture.rda")
-save(targetSNPs,file = "Summary_Stats/targetSNPs.rda")
-write.table(stats,file = "Summary_Stats/SNP_SummaryStats.txt",quote = F,sep = "\t",row.names = F,col.names = T)
+
+save(SNPsumm,file = "Summary_Stats/SNP_summaries_targets.rda")
