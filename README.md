@@ -5,6 +5,9 @@ Pipeline to process rapture genotypes from a raw vcf file to filtered SNP sets f
 ### Folder overviews:
 Input: initial inputs for the pipeline (pre-processed by VCFtools)
 Summary Statistics: Outputs from the Summary Statistics scripts
+SNPsets: Outputs from the SNP_set_creation script
+Software Outputs: Outputs from Colony to be used for cohorts and Nb calculations
+Output: Final outputs for the pipeline
 Homebrew: contains all the user-created functions that are used in the pipeline
 
 
@@ -13,5 +16,8 @@ Scripts are a combination of bash command line code (summarized in Rmarkdown fil
 1. VCFtools_processing - bash
 2. Summary Statistics - R
 2a. ***Figures and Tables for Summary Statistics - R
-3. 
+3. SNP_set_creation - R
+4. Cohort_determination - R
+5. Nb_Ns_calculation - R
+S1. PCA - R
 

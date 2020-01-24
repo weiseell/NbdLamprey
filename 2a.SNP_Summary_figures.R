@@ -1,4 +1,5 @@
 #Summary figures for SNP data set
+#!# Not fixed yet!!
 #Created by: Ellie Weise
 #Originally Created on: Nov 5th, 2019
 #Last Edited on: Nov 5th, 2019
@@ -14,10 +15,6 @@ library(anchors)
 
 
 #load in data
-load(file = "Input/gt_summary_with_targets.rda")
-load(file = "Input/selected_loci_ld_filter_summary.rda")
-load(file = "Input/tag_selected_SNPs.rda")
-load(file = "Input/rapture_panel_all_SNPs.rda")
 
 #getting depth per SNP and combining with all summaries
 gdepth1 <- gdepth %>% mutate(ID = paste0(CHROM,"_",POS))

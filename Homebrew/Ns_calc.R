@@ -3,6 +3,12 @@
 
 #Inputs:
 #family - best config file (has four columns: OffspringID, FatherID, MotherID, and ClusterIndex)
+
+#Outputs:
+#list with three elements
+#1. Curve for the extrapolated Ns model
+#2. The asymptote value for all methods
+#3. Ns value (not extrapolated)
 Ns_calc <- function(family){
   require(vegan)
   family$FatherID <- paste0("Dad",family$FatherID)
