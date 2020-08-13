@@ -12,16 +12,16 @@
 #3. Location summary table with Length/Weight ranges for each cluster, size of each class, model type,
 #BIC value for best fit model, and means of each cluster for length and weight
 
-mixture <- function(df, maxclust = 4, pop = "pop1"){
+mixture <- function(df, maxclust, pop = "pop1"){
   #running mclust
   #loading required packages
   require(tidyverse,mclust)
   #grabbing V1 and V2 from df and turning it into a matrix
   df1 <- as.matrix(data.frame(V1 = df$V1, V2 = df$V2))
   #mclust.BIC function:
-  df.BIC <- mclustBIC(df1, G = 1:maxclust, modelNames = c("VVV"))
+  #df.BIC <- mclustBIC(df1, G = 1:maxclust, modelNames = c("VVV"))
   #running mclust
-  df.mclust <- Mclust(df1, x = df.BIC, modelNames = c("VVV"))
+  df.mclust <- Mclust(df1, x = maxclust, modelNames = c("VVV"))
   
   ##interpreting mclust output
   #adding individual classification and uncertainty to df

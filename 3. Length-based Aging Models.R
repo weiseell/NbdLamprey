@@ -60,15 +60,17 @@ EMclusters[["BMR_2019"]] #best model: 1 cluster
 #running EM models
 #loop to determine the number of clusters
 i <- 1
-bestk <- c(3,2,1)
 for (i in 1:length(samples)) {
   samp_i <- samples[i]
   tmp <- subset(df2, df2$samp == samp_i)
   lw <- data.frame(V1=tmp$V1, V2=tmp$V2,stringsAsFactors = F)
   
   #models
-  model <- mixture(lw,maxclust = bestk[i]) 
+  model <- mixture(lw,maxclust = EMclusters[[samp_i]]) 
   EMmodels[[samp_i]] <- model
+  tmp1 <- data.frame(model[[2]],stringsAsFactors = F)
+  tmp1$pop <- samp_i
+  model[[2]] <- tmp1
   
 }
 
@@ -199,61 +201,37 @@ for (i in 1:length(samples)) {
 #saving individual assignments
 all_locs <- rbind(Bmodels[[1]],Bmodels[[2]],Bmodels[[3]])
 write.table(all_locs,file = "Aging_Models/lw_Bayes_assignments.txt",sep = "\t",row.names = F,col.names = T,quote = F)
+all_locs_EM <- rbind(EMmodels[[1]][[2]],EMmodels[[2]][[2]],EMmodels[[3]][[2]])
+write.table(all_locs,file = "Aging_Models/lw_EM_assignments.txt",sep = "\t",row.names = F,col.names = T,quote = F)
 
 ##4. Plotting all models ####
-bmr17EM <- EMmodels[["BMR_2017"]]
-bmr17_EMplot <- ggplot(bmr17EM[[2]], aes(x=V1, fill = class)) +
+ggplot(all_locs_EM, aes(x=V1, fill = class)) +
+  facet_wrap(~pop, scales = "free_y") +
   geom_histogram(aes(fill = factor(class)),bins = 100) +
   scale_fill_manual(values = c("#000000","#cccccc","#969696","#636363"),
                     name = "Age",
                     labels = c("0", "1","2","3"),
                     guide = guide_legend(reverse = TRUE))+
   labs(x="Length (mm)",y="counts")+
-  theme_bw(base_size = 8)+
-  ggtitle("Age Classifications for Black Mallard River Individuals - \n2017 collection")
+  theme_bw(base_size = 8)
 
-bmr17_Bayesplot <- ggplot(Bmodels[["BMR_2017"]], aes(x=Length, fill = clust)) +
+ggplot(all_locs_Bayes, aes(x=Length, fill = clust)) +
+  facet_wrap(~samp, scales = "free_y") +
   geom_histogram(aes(fill = factor(clust)),bins = 100) +
-  scale_fill_manual(values = c("#7fcdbb","#2c7fb8","#253494"),guide = F)+
-  labs(x="Length (mm)", y="counts")+
-  theme_bw(base_size = 8)+
-  ggtitle("Age Classifications for Black Mallard River Individuals - \n2017 Collection")
-
-bmr18EM <- EMmodels[["BMR_2018"]]
-bmr18_EMplot <- ggplot(bmr18EM[[2]], aes(x=V1, fill = class)) +
-  geom_histogram(aes(fill = factor(class)),bins = 100) +
   scale_fill_manual(values = c("#000000","#cccccc","#969696","#636363"),
                     name = "Age",
                     labels = c("0", "1","2","3"),
                     guide = guide_legend(reverse = TRUE))+
   labs(x="Length (mm)",y="counts")+
-  theme_bw(base_size = 8)+
-  ggtitle("Age Classifications for Black Mallard River Individuals - \n2018 collection")
+  theme_bw(base_size = 8)
 
-bmr18_Bayesplot <- ggplot(Bmodels[["BMR_2018"]], aes(x=Length, fill = clust)) +
-  geom_histogram(aes(fill = factor(clust)),bins = 100) +
-  scale_fill_manual(values = c("#7fcdbb","#2c7fb8","#253494"),guide = F)+
-  labs(x="Length (mm)", y="counts")+
-  theme_bw(base_size = 8)+
-  ggtitle("Age Classifications for Black Mallard River Individuals - \n2018 Collection")
 
-bmr19EM <- EMmodels[["BMR_2019"]]
-bmr19_EMplot <- ggplot(bmr19EM[[2]], aes(x=V1, fill = class)) +
-  geom_histogram(aes(fill = factor(class)),bins = 100) +
-  scale_fill_manual(values = c("#000000","#cccccc","#969696","#636363"),
-                    name = "Age",
-                    labels = c("0", "1","2","3"),
-                    guide = guide_legend(reverse = TRUE))+
-  labs(x="Length (mm)",y="counts")+
-  theme_bw(base_size = 8)+
-  ggtitle("Age Classifications for Black Mallard River Individuals - \n2019 collection")
 
-bmr19_Bayesplot <- ggplot(Bmodels[["BMR_2019"]], aes(x=Length, fill = clust)) +
-  geom_histogram(aes(fill = factor(clust)),bins = 100) +
-  scale_fill_manual(values = c("#7fcdbb","#2c7fb8","#253494"),guide = F)+
-  labs(x="Length (mm)", y="counts")+
-  theme_bw(base_size = 8)+
-  ggtitle("Age Classifications for Black Mallard River Individuals - \n2019 Collection")
 
-multiplot(che18_Bayesplot,bmr17_Bayesplot,bmr18_Bayesplot,bmr19_Bayesplot,ocq18_Bayesplot,che18_EMplot,bmr17_EMplot,bmr18_EMplot,bmr19_EMplot,ocq18_EMplot,cols = 2)
+
+
+
+
+
+
 
