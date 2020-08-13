@@ -1,6 +1,5 @@
-#Summary Statistics
-#Main Objectives:
-#Calculate the following summary statistics:
+#NbdLamprey - Script 1
+##Main Objective: Calculate the following summary statistics:
 #1. Calculate percent coverage and heterozygosity for all SNPs
 #2. Match SNPs to the Rapture Panel and calculate stats for Rapture success
 
@@ -75,3 +74,13 @@ SNPsumm <- merge(rapture_class,stats)
 #summary stats, target classifications, and on-target SNPs
 
 save(SNPsumm,file = "Summary_Stats/SNP_summaries_targets.rda")
+
+
+
+
+
+
+
+
+
+

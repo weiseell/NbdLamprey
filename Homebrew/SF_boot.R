@@ -2,8 +2,6 @@
 #bootstrapping for sibship Nb Method
 ###I don't think this is the right approach, but it exists now
 #Inputs:
-#
-
 
 SF_boot <- function(family,iter,alpha,real_Nb){
   n_fam <- length(family$FatherID)

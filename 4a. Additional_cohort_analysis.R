@@ -16,6 +16,9 @@ source("Homebrew/multiplot.R")
 
 #load in data
 bmr_colony <- read.table("Input_fulldata/colony.bestconfig.bmr.txt",header = T,sep = "\t",stringsAsFactors = F)
+ocq_colony <- read.table("Input_fulldata/colony.bestconfig.ocq.txt",header = T,sep = "\t",stringsAsFactors = F)
+che_colony <- read.table("Input_fulldata/colony.bestconfig.che.txt",header = T,sep = "\t",stringsAsFactors = F)
+
 lw <- read.table("Input_fulldata/exp_lengths_weights.txt",header = T,sep = "\t",stringsAsFactors = F)
 
 #Goal 1####
@@ -159,6 +162,7 @@ for(i in 1:length(Clusters)){
 
 #doing the same for the cluster analysis
 Clusters <- unique(df2$Cluster)
+table(df2$Cluster)
 parents <- list(character(0))
 for(i in 1:length(Clusters)){
   tmp <- df2[which(df2$Cluster == Clusters[i]),]
@@ -172,14 +176,14 @@ for(i in 1:length(Clusters)){
 #looking at length distribution (families w/ multiple offspring only)
 #2017 group
 df17 <- subset(df2,df2$Year_collect == 2017)
-df17 <- df17[df17$family %in% names(which(table(df17$family)>=3)),]
+df17 <- df17[df17$family %in% names(which(table(df17$family)>=5)),]
 #boxplot for full-sibling groups
 boxplot(df17$Length~df17$family, las = 2,
         main = "Black Mallard length distribution by full-sibling family \n2017 Collection",
         xlab = "family",
         ylab = "length (mm)",
         ylim = c(0,130),
-        cex.axis = 0.5)
+        cex.axis = 1.0)
 #boxplot for half-sibling groups
 boxplot(df17$Length~df17$halfsib,
         main = "Black Mallard length distribution by half-sibling group \n2017 Collection",
@@ -217,16 +221,15 @@ ggplot(counts1,aes(x = family,y = n,fill = factor(cohort)))+
   ggtitle("Cohort identification for Black Mallard full-sibling families")
 
 #2018 group
-#2017 group
 df18 <- subset(df2,df2$Year_collect == 2018)
-df18 <- df18[df18$family %in% names(which(table(df18$family)>=3)),]
+df18 <- df18[df18$family %in% names(which(table(df18$family)>=5)),]
 #boxplot for full-sibling groups
 boxplot(df18$Length~df18$family, las = 2,
         main = "Black Mallard length distribution by full-sibling family \n2018 Collection",
         xlab = "family",
         ylab = "length (mm)",
         ylim = c(0,130),
-        cex.axis = 0.5)
+        cex.axis = 1.0)
 #boxplot for half-sibling groups
 boxplot(df18$Length~df18$halfsib,
         main = "Black Mallard length distribution by half-sibling group \n2018 Collection",

@@ -1,5 +1,5 @@
 #Nb_SF <- function
-#calcualtes Nb using the sibship method based on Colony output files
+#calculates Nb using the sibship method based on Colony output files
 
 Nb_SF <- function(family){
   family$parent_ID <- paste0(family$FatherID,"_",family$MotherID)

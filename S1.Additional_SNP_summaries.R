@@ -11,21 +11,12 @@
 library(tidyverse)
 library(anchors)
 
-#homebrew functions
-
-
-#load in data
-
-#getting depth per SNP and combining with all summaries
-gdepth1 <- gdepth %>% mutate(ID = paste0(CHROM,"_",POS))
-
-gdepth1 <- gdepth1 %>% 
-  select(-CHROM:-POS) %>% 
+depth1 <- depth %>% 
   gather(key = "indiv",value = "depth",-ID)
 
-gdepth1 <- replace.value(gdepth1,names = "depth",from = -1, to = 0)
+depth1 <- replace.value(depth1,names = "depth",from = -1, to = 0)
 
-depth_summ <- gdepth1 %>% 
+depth_summ <- depth1 %>% 
   group_by(ID) %>% 
   summarize(depth_mean = mean(depth))
 
