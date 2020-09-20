@@ -12,14 +12,11 @@ library(mclust)
 library(bayesmix)
 library(bmixture)
 
-#setwd
-setwd("~/OneDrive - Michigan State University/Documents/Sea_Lamprey_MS_project/Bioinformatics/BayesMix/")
-
 #loading homebrew functions
 source("Homebrew/mixture_function.R")
 
 #load in length and weight data
-load("Input/test_length_weight.rda")
+df <- read.table("Input_fulldata/exp_lengths_weights.txt",header = T,sep = "\t",stringsAsFactors = F)
 df <- lw
 
 #manipulating data frame
@@ -29,7 +26,8 @@ df1 <- df %>%
   separate(ID2,into = c("spp","loc","num"),sep = "_") %>% 
   select(ID,loc,everything()) %>% 
   select(-spp:-num) %>% 
-  mutate(samp = paste(loc,Year_collect,sep = "_"))
+  mutate(samp = paste(loc,Year_collect,sep = "_")) %>% 
+  filter(samp != "OCQ_2019")
 samples <- unique(df1$samp)
 
 ##1. EM models for all locations ####
@@ -103,43 +101,38 @@ for(i in 1:length(samples)){
   
   RMclust[[samp_i]] <- post.k
   
-  #BayesMix models for BMMdiag plots
-  model_tmp <- BMMmodel(len,k = 4, initialValues = list(S0 = 2),
-                        priors = list(kind = "independence",
-                                      parameter = "priorsFish", 
-                                      hierarchical = "tau"))
-  control <- JAGScontrol(variables = c("mu", "tau", "eta", "S"),
-                         burn.in = 10000, n.iter = 50000) 
-  z <- JAGSrun(len, model = model_tmp, control = control)
-  Bclust[[samp_i]] <- z
-  
   #BD-MCMC with bmixture
   bmixt.model <- bmixt(len, k = "unknown", iter = 500000, burnin = 100000, k_max = 4)
   BDclust[[samp_i]] <- bmixt.model
 }
 
 RMclust[["BMR_2017"]] #best: 2 clusters
-RMclust[["BMR_2018"]] #best: 3 clusters
-RMclust[["BMR_2019"]] #best: 2 clusters
+RMclust[["BMR_2018"]] #best: 2 clusters
+RMclust[["BMR_2019"]] #best: 2 clusters (not good convergence)
+RMclust[["OCQ_2018"]] #best: 1 cluster
+RMclust[["CHE_2018"]] #best: 2 clusters (not good convergence)
 
-BMMdiag(Bclust[["BMR_2017"]]) #best cluster: 2
-BMMdiag(Bclust[["BMR_2018"]]) #best cluster: 2
-BMMdiag(Bclust[["BMR_2019"]]) #best cluster: 1
+#OCQ_2018: 2 clusters
+bmix_vals <- data.frame(kval = BDclust[["OCQ_2018"]]$all_k, weight = BDclust[["OCQ_2018"]]$all_weights,stringsAsFactors = F)
+bmix_vals %>% group_by(kval) %>% summarise(weightsum=sum(weight),prop = sum(weight)/sum(bmix_vals$weight))
+#CHE_2018: 3 clusters (not good convergence)
+bmix_vals <- data.frame(kval = BDclust[["CHE_2018"]]$all_k, weight = BDclust[["CHE_2018"]]$all_weights,stringsAsFactors = F)
+bmix_vals %>% group_by(kval) %>% summarise(weightsum=sum(weight),prop = sum(weight)/sum(bmix_vals$weight))
 
-#BMR_2017
+#BMR_2017: 2 clusters (not good convergence)
 bmix_vals <- data.frame(kval = BDclust[["BMR_2017"]]$all_k, weight = BDclust[["BMR_2017"]]$all_weights,stringsAsFactors = F)
 bmix_vals %>% group_by(kval) %>% summarise(weightsum=sum(weight),prop = sum(weight)/sum(bmix_vals$weight))
-#BMR_2018
+#BMR_2018: 4 clusters (not good convergence)
 bmix_vals <- data.frame(kval = BDclust[["BMR_2018"]]$all_k, weight = BDclust[["BMR_2018"]]$all_weights,stringsAsFactors = F)
 bmix_vals %>% group_by(kval) %>% summarise(weightsum=sum(weight),prop = sum(weight)/sum(bmix_vals$weight))
-#BMR_2019
+#BMR_2019: 3 clusters (not good convergence)
 bmix_vals <- data.frame(kval = BDclust[["BMR_2019"]]$all_k, weight = BDclust[["BMR_2019"]]$all_weights,stringsAsFactors = F)
 bmix_vals %>% group_by(kval) %>% summarise(weightsum=sum(weight),prop = sum(weight)/sum(bmix_vals$weight))
 
 
 ##3. Bayes models for all locations ####
 i <- 1
-bestk <- c(2,3,1)
+bestk <- c(1,2,2,3,2)
 Bmodels <- vector(mode = "list", length = length(samples))
 names(Bmodels) <- samples
 
@@ -161,15 +154,11 @@ for (i in 1:length(samples)) {
     Bmodels[[samp_i]] <- z
   }
 }
-##diagnostic plots to determine the best sorting method
-BMMdiag(Bmodels[["BMR_2017"]])
-BMMdiag(Bmodels[["BMR_2018"]])
-BMMdiag(Bmodels[["BMR_2019"]])
-
 #sorting for models with multiple cohorts
+Bmodels[["CHE_2018"]] <- Sort(Bmodels[["CHE_2018"]],by = "mu")
 Bmodels[["BMR_2017"]] <- Sort(Bmodels[["BMR_2017"]],by = "mu")
 Bmodels[["BMR_2018"]] <- Sort(Bmodels[["BMR_2018"]],by = "mu")
-
+Bmodels[["BMR_2019"]] <- Sort(Bmodels[["BMR_2019"]],by = "mu")
 i <- 1
 for (i in 1:length(samples)) {
   samp_i <- samples[i]
@@ -199,7 +188,7 @@ for (i in 1:length(samples)) {
 }
 
 #saving individual assignments
-all_locs <- rbind(Bmodels[[1]],Bmodels[[2]],Bmodels[[3]])
+all_locs_Bayes <- rbind(Bmodels[[1]],Bmodels[[2]],Bmodels[[3]],Bmodels[[4]],Bmodels[[5]])
 write.table(all_locs,file = "Aging_Models/lw_Bayes_assignments.txt",sep = "\t",row.names = F,col.names = T,quote = F)
 all_locs_EM <- rbind(EMmodels[[1]][[2]],EMmodels[[2]][[2]],EMmodels[[3]][[2]])
 write.table(all_locs,file = "Aging_Models/lw_EM_assignments.txt",sep = "\t",row.names = F,col.names = T,quote = F)
@@ -217,11 +206,9 @@ ggplot(all_locs_EM, aes(x=V1, fill = class)) +
 
 ggplot(all_locs_Bayes, aes(x=Length, fill = clust)) +
   facet_wrap(~samp, scales = "free_y") +
-  geom_histogram(aes(fill = factor(clust)),bins = 100) +
+  geom_histogram(aes(fill = factor(clust)),bins = 50) +
   scale_fill_manual(values = c("#000000","#cccccc","#969696","#636363"),
-                    name = "Age",
-                    labels = c("0", "1","2","3"),
-                    guide = guide_legend(reverse = TRUE))+
+                    guide = F)+
   labs(x="Length (mm)",y="counts")+
   theme_bw(base_size = 8)
 

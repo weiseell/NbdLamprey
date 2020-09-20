@@ -1,6 +1,6 @@
-#SNP set creation
+#NbdLamprey - Script 4: SNP Sets
 #Main Objectives:
-#1. Make a SNP data set for LD method and pedigree methods of Nb
+#1. #1. Make a SNP data set for LD method and pedigree methods of Nb
 #2. Make GENEPOP and Colony files for all populations
 #load libraries:
 library(tidyverse)
