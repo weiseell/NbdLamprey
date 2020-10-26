@@ -17,7 +17,9 @@ plotPedigree <- function(df,title){
   dadlocs <- data.frame(ID = unique(df$Father), x = rep(3,length(unique(df$Father))), y = seq(from=1,to=length(offspringID),length.out=length(unique(df$Father))))
   
   #now make the plot
-  plot(x = c(1,2,3), y = c(0, length(offspringID), length(offspringID)), pch = "", axes = FALSE, xlab = "", ylab = "",main = title)
+  plot(x = c(1,2,3), 
+       y = c(0, length(offspringID), length(offspringID)), 
+       pch = "", axes = FALSE, xlab = "", ylab = "",main = title)
   points(x = rep(2,length(offspringID)), y = offspringID, pch = "-", cex = 0.4)
   points(x = momlocs$x, y = momlocs$y, pch = 19, cex = 0.5)
   points(x = dadlocs$x, y = dadlocs$y, pch = 19, cex = 0.5)

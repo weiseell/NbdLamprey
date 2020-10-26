@@ -3,7 +3,7 @@ colonydat_create <- function(moms = NA, dads = NA, kids, markers, update.alfs = 
                                 clone = 0, sib.scale = 1, sib.prior = 0, known.alfs = 0, run.number = 1,
                                 run.length = 2, monitor = 0, windows.version = 0, full.likelihood = 1,
                                 likelihood.precision = 2, prob.mom = 1.0, prob.dad = 1.0,output_file = "colony2.dat"){
-  
+  options(scipen = 999)
   #getting current working directory and fixing slashes for running on linux
   my.wd <- "'Input.data'"
   my.wd2 <- "'Output.data'" 

@@ -1,4 +1,4 @@
-ID	loc	Sample_number	Year_collect	Length	Weight	samp	clust
+OffspringID	loc	Sample_number	Year_collect	Length	Weight	samp	clust
 PM_OCQ_001	OCQ	1	2018	99	1.145	OCQ_2018	clust1
 PM_OCQ_002	OCQ	2	2018	108	1.284	OCQ_2018	clust1
 PM_OCQ_003	OCQ	3	2018	108	1.624	OCQ_2018	clust1

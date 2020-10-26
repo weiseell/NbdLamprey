@@ -4,13 +4,16 @@
 #2.Calculate Ns and extrapolated Ns
 
 #libraries
-
+library(tidyverse)
 #homebrew functions
 source("Homebrew/PwoP.R")
 source("Homebrew/PwoP_boot.R")
 source("Homebrew/Ns_calc.R")
 #load in data
-load("Software_outputs/test_best_config.rda")
+bmral <- read.table("Software_outputs/bmral_BestConfig_091820.txt",header = T,sep = "\t",stringsAsFactors = F)
+bmr15 <- read.table("Software_outputs/bmr15_BestConfig_091820.txt",header = T,sep = "\t",stringsAsFactors = F)
+bmr16 <- read.table("Software_outputs/bmr16_BestConfig_091820.txt",header = T,sep = "\t",stringsAsFactors = F)
+ocq <- read.table("Software_outputs/ocq_BestConfig_091820.txt",header = T,sep = "\t",stringsAsFactors = F)
 
 #calculating PwoP
 Nb_PwoP <- PwoP(best_config)

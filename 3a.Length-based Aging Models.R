@@ -8,16 +8,13 @@
 
 #loading libraries
 library(tidyverse)
-library(mclust)
 library(bayesmix)
 library(bmixture)
 
 #loading homebrew functions
-source("Homebrew/mixture_function.R")
 
 #load in length and weight data
 df <- read.table("Input_fulldata/exp_lengths_weights.txt",header = T,sep = "\t",stringsAsFactors = F)
-df <- lw
 
 #manipulating data frame
 df1 <- df %>% 
@@ -75,10 +72,8 @@ for (i in 1:length(samples)) {
 
 ##2. Bayes Cluster determining models ####
 RMclust <- vector(mode = "list", length = length(samples))
-Bclust <- vector(mode = "list", length = length(samples))
 BDclust <- vector(mode = "list", length = length(samples))
 names(RMclust) <- samples
-names(Bclust) <- samples
 names(BDclust) <- samples
 i <- 1
 for(i in 1:length(samples)){
@@ -118,7 +113,6 @@ bmix_vals %>% group_by(kval) %>% summarise(weightsum=sum(weight),prop = sum(weig
 #CHE_2018: 3 clusters (not good convergence)
 bmix_vals <- data.frame(kval = BDclust[["CHE_2018"]]$all_k, weight = BDclust[["CHE_2018"]]$all_weights,stringsAsFactors = F)
 bmix_vals %>% group_by(kval) %>% summarise(weightsum=sum(weight),prop = sum(weight)/sum(bmix_vals$weight))
-
 #BMR_2017: 2 clusters (not good convergence)
 bmix_vals <- data.frame(kval = BDclust[["BMR_2017"]]$all_k, weight = BDclust[["BMR_2017"]]$all_weights,stringsAsFactors = F)
 bmix_vals %>% group_by(kval) %>% summarise(weightsum=sum(weight),prop = sum(weight)/sum(bmix_vals$weight))
@@ -132,11 +126,11 @@ bmix_vals %>% group_by(kval) %>% summarise(weightsum=sum(weight),prop = sum(weig
 
 ##3. Bayes models for all locations ####
 i <- 1
-bestk <- c(1,2,2,3,2)
+bestk <- c(1,2,2,3,3)
 Bmodels <- vector(mode = "list", length = length(samples))
 names(Bmodels) <- samples
 
-for (i in 1:length(samples)) {
+for (i in 5:length(samples)) {
   samp_i <- samples[i]
   tmp <- subset(df1, df1$samp == samp_i)
   len <- tmp$Length
@@ -145,8 +139,7 @@ for (i in 1:length(samples)) {
     #bayesmix model
     model_tmp <- BMMmodel(len,k = bestk[i], 
                           priors = list(kind = "independence",
-                                        parameter = "priorsUncertain"),
-                          restrict = "tau")
+                                        parameter = "priorsUncertain"))
     control <- JAGScontrol(variables = c("mu", "tau", "eta", "S"),
                            burn.in = 10000, n.iter = 50000)
     
@@ -158,7 +151,7 @@ for (i in 1:length(samples)) {
 Bmodels[["CHE_2018"]] <- Sort(Bmodels[["CHE_2018"]],by = "mu")
 Bmodels[["BMR_2017"]] <- Sort(Bmodels[["BMR_2017"]],by = "mu")
 Bmodels[["BMR_2018"]] <- Sort(Bmodels[["BMR_2018"]],by = "mu")
-Bmodels[["BMR_2019"]] <- Sort(Bmodels[["BMR_2019"]],by = "mu")
+Bmodels[["BMR_2019"]] <- Sort(Bmodels[["BMR_2019"]],by = "eta")
 i <- 1
 for (i in 1:length(samples)) {
   samp_i <- samples[i]
@@ -190,19 +183,9 @@ for (i in 1:length(samples)) {
 #saving individual assignments
 all_locs_Bayes <- rbind(Bmodels[[1]],Bmodels[[2]],Bmodels[[3]],Bmodels[[4]],Bmodels[[5]])
 write.table(all_locs,file = "Aging_Models/lw_Bayes_assignments.txt",sep = "\t",row.names = F,col.names = T,quote = F)
-all_locs_EM <- rbind(EMmodels[[1]][[2]],EMmodels[[2]][[2]],EMmodels[[3]][[2]])
-write.table(all_locs,file = "Aging_Models/lw_EM_assignments.txt",sep = "\t",row.names = F,col.names = T,quote = F)
 
 ##4. Plotting all models ####
-ggplot(all_locs_EM, aes(x=V1, fill = class)) +
-  facet_wrap(~pop, scales = "free_y") +
-  geom_histogram(aes(fill = factor(class)),bins = 100) +
-  scale_fill_manual(values = c("#000000","#cccccc","#969696","#636363"),
-                    name = "Age",
-                    labels = c("0", "1","2","3"),
-                    guide = guide_legend(reverse = TRUE))+
-  labs(x="Length (mm)",y="counts")+
-  theme_bw(base_size = 8)
+#labels for plot
 
 ggplot(all_locs_Bayes, aes(x=Length, fill = clust)) +
   facet_wrap(~samp, scales = "free_y") +
