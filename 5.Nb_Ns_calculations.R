@@ -5,42 +5,44 @@
 
 #libraries
 library(tidyverse)
+library(ggrepel)
 #homebrew functions
 source("Homebrew/PwoP.R")
 source("Homebrew/PwoP_boot.R")
 source("Homebrew/Ns_calc.R")
+source("Homebrew/multiplot.R")
 #load in data
-bmral <- read.table("Software_outputs/bmral_BestConfig_091820.txt",header = T,sep = "\t",stringsAsFactors = F)
-bmr15 <- read.table("Software_outputs/bmr15_BestConfig_091820.txt",header = T,sep = "\t",stringsAsFactors = F)
-bmr16 <- read.table("Software_outputs/bmr16_BestConfig_091820.txt",header = T,sep = "\t",stringsAsFactors = F)
-ocq <- read.table("Software_outputs/ocq_BestConfig_091820.txt",header = T,sep = "\t",stringsAsFactors = F)
+load("Aging_Models/Family_data_all_locations.rda")
 
-#calculating PwoP
-Nb_PwoP <- PwoP(best_config)
-uncert <- PwoP_boot(best_config,iter = 1000,alpha = 0.05,real_Nb = Nb_PwoP$Nb)
+#prepping lists for storing results
+locs <- unique(all_families$loc)
+names(loc_names) <- locs
+Nb_PwoP_all <- data.frame(matrix(data = NA, nrow = length(locs), ncol = 6))
+colnames(Nb_PwoP_all) <- c("loc","Nb","kbar","Vk", "CI_Lower", "CI_Upper")
+Ns_all <- data.frame(matrix(data = NA, nrow = length(locs), ncol = 6))
+colnames(Ns_all) <- c("loc","Ns" ,"Ns_Chao","Chao_uncert","Ns_Jackknife","Jackknife_uncert")
 
-#calculating Ns and extrapolated Ns
-#getting rid of duplicates (not sure why they're there, but they are :/)
-best_config2 <- best_config[!duplicated(best_config$OffspringID),]
-best_config2 <- na.omit(best_config2)
-Ns <- Ns_calc(best_config2)
+#loop to calculate Nb - PwoP and extrapolated Ns
+i <- 1
+for (i in 1:length(locs)) {
+  #PwoP
+  ltmp <- locs[i]
+  tmp <- subset(all_families,all_families$loc == ltmp)
+  PwoP_tmp <- PwoP(tmp)
+  uncert <- PwoP_boot(tmp,iter = 1000,alpha = 0.05, real_Nb = PwoP_tmp["Nb"])
+  names(uncert) <- c("CI_Lower","CI_Upper")
+  tmp1 <- c(PwoP_tmp,uncert)
+  Nb_PwoP_all[i,] <- c(ltmp,tmp1)
+  
+  #Ns
+  tmp2 <- tmp[!duplicated(tmp$OffspringID),]
+  tmp2 <- na.omit(tmp2)
+  Ns_tmp <- Ns_calc(tmp2)
+  
+  #saving values into a table
+  Ns_all[i,] <- c(ltmp,Ns_tmp[[3]],Ns_tmp[[2]]$chao,Ns_tmp[[2]]$chao.se,Ns_tmp[[2]]$jack1,Ns_tmp[[2]]$jack1.se)
+  
+}
 
-#Figure for Ns
-#adding accumulation curve with uncertainty
-plot(Ns[[1]], ci.type = "poly", ci.col = "lightblue",ci.lty = 0,
-     main = "Ns Accumulation Curve - Test set",
-     ylim = c(0,100),
-     xlab = "Number of Offspring sampled",
-     ylab = "Number of Parents")
-#adding boxplot distribution
-boxplot(Ns[[1]],add = T,pch = 19,cex = 0.2)
-#adding horizontal lines for the extrapolated estimates
-abline(h = Ns[[2]]$chao,col = "blue")
-abline(h = Ns[[2]]$jack1,col = "darkgreen")
-#adds labels to the extrapolation lines
-#!# need to click on the graph to add the label
-#running the line will initiate a plus sign on your cursor that you can use to place the label
-text(locator(1),"Chao estimate = 85.8",col = "blue")
-text(locator(1),"Jackknife estimate = 91.9",col = "darkgreen")
 
 #!# Need to make an Nb/Ns table and save plot (also need to do this for script 4)

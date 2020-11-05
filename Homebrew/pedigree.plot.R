@@ -35,6 +35,18 @@ pedigree.plot <- function(family,title = "Pedigree Plot"){
   mtext("Parent 2", side = 3, line = 0, at = 3, cex = 0.9)
   mtext("Offspring", side = 3, line = 0, at = 2, cex = 0.9)
   #adding rectangles
+  if(length(unique(family$loc > 1))){
+    cohorts <- unique(family$loc)
+    for (r in 1:length(cohorts)) {
+      c <- cohorts[r]
+      rect(xleft=1.75,
+           xright = 2.25,
+           ybottom = max(which(family$clust == c)), 
+           ytop = min(which(family$clust == c)),
+           border = "black", lwd = 2)
+      text(x = 1.7, y = mean(which(family$clust == c)), c, pos =2, col = "black")
+    }
+  }
   cohorts <- unique(family$cohort)
   for (r in 1:length(cohorts)) {
     c <- cohorts[r]
@@ -43,6 +55,6 @@ pedigree.plot <- function(family,title = "Pedigree Plot"){
          ybottom = max(which(family$cohort == c)), 
          ytop = min(which(family$cohort == c)),
          border = "black", lwd = 2)
-    text(x = 1.7, y = mean(which(family$cohort == c)), c, pos =2, col = "black")
+    text(x = 1.7, y = mean(which(family$cohort == c)), paste("inferred\n",c), pos =2, col = "black")
   }
 }

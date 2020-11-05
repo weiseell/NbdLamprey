@@ -5,7 +5,7 @@
 library(tidyverse)
 
 #functions
-source("Homebrew/plotPedigree.R")
+source("Homebrew/pedigree.plot.R")
 ##reading in data
 #load in data
 all_locs <- read.table("Aging_Models/lw_Bayes_assignments.txt",header = T,sep = "\t",stringsAsFactors = F)
@@ -21,48 +21,34 @@ all_locs %>%
   group_by(samp,clust) %>% 
   summarise(maxi <- max(Length))
 
-#converting clusters into inferred cohorts
-all_locs$cohort <- NA
-all_locs[which(all_locs$samp == "BMR_2017" & all_locs$clust == "clust1"),]$cohort <- "2016"
-all_locs[which(all_locs$samp == "BMR_2017" & all_locs$clust == "clust2"),]$cohort <- "2015"
-
-all_locs[which(all_locs$samp == "BMR_2018" & all_locs$clust == "clust1"),]$cohort <- "2016"
-all_locs[which(all_locs$samp == "BMR_2018" & all_locs$clust == "clust2"),]$cohort <- "2015"
-all_locs[which(all_locs$samp == "BMR_2018" & all_locs$clust == "clust3"),]$cohort <- "2014"
-
-all_locs[which(all_locs$samp == "CHE_2018" & all_locs$clust == "clust1"),]$cohort <- "2016"
-all_locs[which(all_locs$samp == "CHE_2018" & all_locs$clust == "clust2"),]$cohort <- "2015"
-
-all_locs[which(all_locs$samp == "OCQ_2018" & all_locs$clust == "clust1"),]$cohort <- "2016"
-
-all_locs[which(all_locs$samp == "BMR_2019" & all_locs$clust == "clust2"),]$cohort <- "2016"
-
 all_locs1 <- all_locs[which(all_locs$OffspringID %in% best_config$OffspringID),]
 all_locs1 <- all_locs1 %>% select(-loc)
 
 df <- merge(all_locs,best_config)
-
 ##splitting pedigrees by collection and length cluster
 #BMR - 2017
-bmr17 <- subset(df,df$samp == "BMR_2017")
 bmr17.1 <- subset(df,df$samp == "BMR_2017" & df$clust == "clust1")
+bmr17.1$cohort <- "2016"
 bmr17.2 <- subset(df,df$samp == "BMR_2017" & df$clust == "clust2")
+bmr17.2$cohort <- "2015"
+bmr17 <- rbind(bmr17.1,bmr17.2)
 #BMR - 2018
-bmr18 <- subset(df,df$samp == "BMR_2018")
 bmr18.1 <- subset(df,df$samp == "BMR_2018" & df$clust == "clust1")
+bmr18.1$cohort <- "2017"
 bmr18.2 <- subset(df,df$samp == "BMR_2018" & df$clust == "clust2")
+bmr18.2$cohort <- "2016"
 bmr18.3 <- subset(df,df$samp == "BMR_2018" & df$clust == "clust3")
+bmr18.3$cohort <- "2015"
+bmr18 <- rbind(bmr18.1,bmr18.2,bmr18.3)
 #OCQ
 ocq <- subset(df,df$samp == "OCQ_2018")
-ocq.1 <- subset(df,df$samp == "OCQ_2018" & df$clust == "clust1")
-
+ocq$cohort <- "2016"
 #CHE - 2018
 che <- subset(df,df$samp == "CHE_2018")
-che.1 <- subset(df,df$samp == "CHE_2018" & df$clust == "clust1")
-che.2 <- subset(df,df$samp == "CHE_2018" & df$clust == "clust2")
+che$cohort <- "2017"
 ##quantifying family relationships across clusters
 #OCQ
-table(ocq.1$ClusterIndex)
+table(ocq$ClusterIndex)
 
 #BMR
 #BMR17 small group
@@ -80,7 +66,7 @@ table(bmr18.3$ClusterIndex)
 
 ##separating outlier groups
 bmr_cohort16 <- bmr_sing
-bmr <- subset(df,df$samp == "BMR_2017" | df$samp == "BMR_2018")
+bmr <- rbind(bmr17,bmr18)
 bmr_cohort15 <- bmr[!(bmr$OffspringID %in% bmr_cohort16$OffspringID),]
 
 ##separating out Pigeon River CHE samples
@@ -93,22 +79,25 @@ chePR <- che %>%
   select(-spp:-num1)
 chePR$samp <- "PR_2018"
 ##putting all locs together
-bmr_cohort15$loc <- "bmrBL15"
-bmr_sing$loc <- "bmrBL16"
+bmr_cohort15$loc <- "2015"
+bmr_sing$loc <- "2016"
 bmral <- subset(df,df$samp == "BMR_2019")
 bmral$loc <- "bmrAL"
+bmral$cohort <- "2016"
 table(bmral$clust)
 bmral$clust <- "clust1"
-ocq <- subset(df,df$loc == "OCQ")
 all_families <- rbind(bmr_sing, bmr_cohort15, ocq, bmral, chePR)
 
 ##family diagrams
 all_families1 <- all_families %>% 
-  select(OffspringID,MotherID,FatherID,ClusterIndex,cohort,samp)
+  select(OffspringID,MotherID,FatherID,ClusterIndex,clust,samp,cohort)
+#saving family data
+save(all_families,file = "Aging_Models/Family_data_all_locations.rda")
+#pedigree visualization plots
 bmr.plot <- subset(all_families1,all_families1$samp=="BMR_2017"|all_families1$samp=="BMR_2018")
 ocq.plot <- subset(all_families1,all_families1$samp == "OCQ_2018")
 
-tiff(filename = "Figures/Pedigree_plots.tiff",width = 6,height = 4,units = "in",res = 400)
+tiff(filename = "Figures/Pedigree_plots.tiff",width = 10,height = 8,units = "in",res = 200)
 par(mfrow=c(1,2))
 pedigree.plot(bmr.plot,title = "Lower Black Mallard River")
 pedigree.plot(ocq.plot,title = "Ocqueoc River")
