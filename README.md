@@ -12,12 +12,10 @@ Homebrew: contains all the user-created functions that are used in the pipeline
 
 
 ### Script overviews:
-Scripts are a combination of bash command line code (summarized in Rmarkdown file) and R scripts
-1. VCFtools_processing - bash
-2. Summary Statistics - R
-2a. ***Figures and Tables for Summary Statistics - R
-3. SNP_set_creation - R
-4. Cohort_determination - R
-5. Nb_Ns_calculation - R
-S1. PCA - R
+1. Generating summary statistics for the input genotype file
+2. Generating a set of SNPs for COLONY for each location
+3. Length-based Aging Models for each location
+4. Generating COLONY files and NeEstimator SNP set for all cohorts
+5. Calculating Nb and Ns for all cohorts
+6. Additional Scripts to create figures found in the manuscript
 

@@ -106,12 +106,12 @@ dev.off()
 ##bayesmix figure
 all_families$samp <- factor(all_families$samp,
                             levels = c("BMR_2017","BMR_2018","BMR_2019","OCQ_2018","PR_2018"),
-                            labels = c("Lower Black Mallard - 2017 Collection","Lower Black Mallard - 2018 Collection","Upper Black Mallard","Ocqueoc River","Pigeon River"))
+                            labels = c("Lower Black Mallard - 2017 Collection","Lower Black Mallard - 2018 Collection","Upper Black Mallard - 2019 Collection","Ocqueoc River - 2018 Collection","Pigeon River - 2018 Collection"))
 tiff(filename = "Figures/Age_classification_plot.tiff",width = 4,height = 5,units = "in",res = 400)
 ggplot(all_families, aes(x=Length, fill = clust)) +
   facet_wrap(vars(samp),scales = "free_y",ncol = 1)+
   geom_histogram(aes(fill = factor(clust)),binwidth = 2) +
-  scale_fill_manual(values = c("#7fcdbb","#2c7fb8","#253494"),
+  scale_fill_manual(values = c("#225ea8","#02818a","#a8ddb5"),
                     guide = F)+
   labs(x="Length (mm)", y="counts")+
   theme_bw(base_size = 10)+
