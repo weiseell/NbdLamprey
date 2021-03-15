@@ -8,85 +8,99 @@ library(tidyverse)
 source("Homebrew/pedigree.plot.R")
 ##reading in data
 #load in data
-all_locs <- read.table("Aging_Models/lw_Bayes_assignments.txt",header = T,sep = "\t",stringsAsFactors = F)
+all_locs <- read.table("AgingModels/lw_Bayes_assignments.txt",header = T,sep = "\t",stringsAsFactors = F)
+all_locs <- all_locs %>% 
+  rename(OffspringID=ID)
 #note - BestConfig files were reformatted to be tab delimited and 
 #special characters in the file were removed prior to load
-bmr <- read.table("Software_outputs/bmr_BestConfig_091820.txt",header = T,sep = "\t",stringsAsFactors = F)
-che <- read.table("Software_outputs/che_BestConfig_091820.txt",header = T,sep = "\t",stringsAsFactors = F)
-ocq <- read.table("Software_outputs/ocq_BestConfig_091820.txt", header = T, sep = "\t",stringsAsFactors = F)
-best_config <- rbind(bmr,ocq,che)
-
-#adding ages to model results
+#identify locations with multiple inferred cohorts
 all_locs %>% 
-  group_by(samp,clust) %>% 
-  summarise(maxi <- max(Length))
+  group_by(samp) %>% 
+  summarise(nclust=length(unique(clust)),ss=n(),max_len = max(Length))
+locs <- c("CAT","MAN","MIR","TWO")
+best_config <- data.frame(matrix(ncol=5,nrow = 0))
+#read in pedigree data for locations with multiple inferred cohorts
+for (i in 1:length(locs)) {
+  print(i)
+  df <- readLines(paste0("SoftwareOutput/",locs[i],".Output.data.BestCluster"))
+  #separate file into usable data frame
+  df <- strsplit(df,"\\s+")
+  df1 <- matrix(unlist(df),byrow = T)
+  df1 <- df1[df1 != ""]
+  df1 <- matrix(df1,ncol = 5,byrow = T)
+  df1 <- as.data.frame(df1)
+  colnames(df1) <- df1[1,]
+  df1 <- df1[-1,]
 
-all_locs1 <- all_locs[which(all_locs$OffspringID %in% best_config$OffspringID),]
-all_locs1 <- all_locs1 %>% select(-loc)
+  best_config <- rbind(best_config,df1)
+}
+df <- merge(best_config,all_locs)
+#adding ages to model results
+df %>% 
+  group_by(loc,clust) %>% 
+  summarise(ss=n(),max_len = max(Length))
 
 df <- merge(all_locs,best_config)
 ##splitting pedigrees by collection and length cluster
-#BMR - 2017
-bmr17.1 <- subset(df,df$samp == "BMR_2017" & df$clust == "clust1")
-bmr17.1$cohort <- "2016"
-bmr17.2 <- subset(df,df$samp == "BMR_2017" & df$clust == "clust2")
-bmr17.2$cohort <- "2015"
-bmr17 <- rbind(bmr17.1,bmr17.2)
-#BMR - 2018
-bmr18.1 <- subset(df,df$samp == "BMR_2018" & df$clust == "clust1")
-bmr18.1$cohort <- "2017"
-bmr18.2 <- subset(df,df$samp == "BMR_2018" & df$clust == "clust2")
-bmr18.2$cohort <- "2016"
-bmr18.3 <- subset(df,df$samp == "BMR_2018" & df$clust == "clust3")
-bmr18.3$cohort <- "2015"
-bmr18 <- rbind(bmr18.1,bmr18.2,bmr18.3)
-#OCQ
-ocq <- subset(df,df$samp == "OCQ_2018")
-ocq$cohort <- "2016"
-#CHE - 2018
-che <- subset(df,df$samp == "CHE_2018")
-che$cohort <- "2017"
-##quantifying family relationships across clusters
-#OCQ
-table(ocq$ClusterIndex)
+#MIR
+mir.1 <- subset(df,df$samp == "MIR_2017" & df$clust == "clust1")
+mir.1$cohort <- "2016"
+mir.2 <- subset(df,df$samp == "MIR_2017" & df$clust == "clust2")
+mir.2$cohort <- "2015"
+mir.3 <- subset(df,df$samp == "MIR_2017" & df$clust == "clust3")
+mir.3$cohort <- "2014"
+mir <- rbind(mir.1,mir.2,mir.3)
+#MAN
+man.1 <- subset(df,df$samp == "MAN_2019" & df$clust == "clust1")
+man.1$cohort <- "2018"
+man.2 <- subset(df,df$samp == "MAN_2019" & df$clust == "clust2")
+man.2$cohort <- "2017"
+man <- rbind(man.1,man.2)
+#TWO
+two.1 <- subset(df,df$samp == "TWO_2019" & df$clust == "clust2")
+two.1$cohort <- "2018"
+two.2 <- subset(df,df$samp == "TWO_2019" & df$clust == "clust3")
+two.2$cohort <- "2017"
+two <- rbind(two.1,two.2)
 
-#BMR
-#BMR17 small group
-table(bmr17.1$ClusterIndex%in%bmr17.2$ClusterIndex)
-table(bmr17.1$ClusterIndex%in%bmr18.1$ClusterIndex)
-table(bmr17.1$ClusterIndex%in%bmr18.2$ClusterIndex)
-table(bmr17.1$ClusterIndex%in%bmr18.3$ClusterIndex)
-bmr_sing <- bmr17.1[!(bmr17.1$ClusterIndex %in% bmr17.2$ClusterIndex),]
+##quantifying family relationships across clusters
+#MIR
+#testing overlap
+table(mir$ClusterIndex)
+table(mir.1$ClusterIndex%in%mir.2$ClusterIndex)
+table(mir.1$ClusterIndex%in%mir.3$ClusterIndex)
+table(mir.2$ClusterIndex%in%mir.3$ClusterIndex)
+bmr_sing <- mir.1[!(mir.1$ClusterIndex %in% mir.2$ClusterIndex),]
 bmr_sing <- rbind(bmr_sing,bmr18[bmr18$ClusterIndex %in% bmr_sing$ClusterIndex,])
 
-#BMR18 small group
-table(bmr18.1$ClusterIndex)
-table(bmr18.2$ClusterIndex)
-table(bmr18.3$ClusterIndex)
+#comparing families
+table(mir.1$ClusterIndex)
+table(mir.2$ClusterIndex)
+table(mir.3$ClusterIndex)
 
-##separating outlier groups
-bmr_cohort16 <- bmr_sing
-bmr <- rbind(bmr17,bmr18)
-bmr_cohort15 <- bmr[!(bmr$OffspringID %in% bmr_cohort16$OffspringID),]
+ggplot(mir,aes(x=ClusterIndex,y=Length,color=cohort))+
+  geom_point()+theme_bw()
+##man
+#testing overlap
+table(man$ClusterIndex)
+table(man.1$ClusterIndex%in%man.2$ClusterIndex)
+#comparing families
+table(man.1$ClusterIndex)
+table(man.2$ClusterIndex)
 
-##separating out Pigeon River CHE samples
-chePR <- che %>% 
-  mutate(ID1 = OffspringID) %>% 
-  separate(ID1,into = c("spp","loc1","num"),sep = "_") %>% 
-  mutate(num1 = as.numeric(num)) %>% 
-  filter(num1 <= 29) %>% 
-  filter(num1 != 25) %>% 
-  select(-spp:-num1)
-chePR$samp <- "PR_2018"
-##putting all locs together
-bmr_cohort15$loc <- "2015"
-bmr_sing$loc <- "2016"
-bmral <- subset(df,df$samp == "BMR_2019")
-bmral$loc <- "bmrAL"
-bmral$cohort <- "2016"
-table(bmral$clust)
-bmral$clust <- "clust1"
-all_families <- rbind(bmr_sing, bmr_cohort15, ocq, bmral, chePR)
+ggplot(man,aes(x=ClusterIndex,y=Length,color=cohort))+
+  geom_point()+theme_bw()
+
+##two
+#testing overlap
+table(two$ClusterIndex)
+table(two.2$ClusterIndex%in%two.1$ClusterIndex)
+#comparing families
+table(two.1$ClusterIndex)
+table(two.2$ClusterIndex)
+
+ggplot(two,aes(x=ClusterIndex,y=Length,color=cohort))+
+  geom_point()+theme_bw()
 
 ##family diagrams
 all_families1 <- all_families %>% 
@@ -96,11 +110,12 @@ save(all_families,file = "Aging_Models/Family_data_all_locations.rda")
 #pedigree visualization plots
 bmr.plot <- subset(all_families1,all_families1$samp=="BMR_2017"|all_families1$samp=="BMR_2018")
 ocq.plot <- subset(all_families1,all_families1$samp == "OCQ_2018")
-
+che.plot <- subset(all_families1,all_families1$samp == "PR_2018")
 tiff(filename = "Figures/Pedigree_plots.tiff",width = 10,height = 8,units = "in",res = 200)
 par(mfrow=c(1,2))
 pedigree.plot(bmr.plot,title = "Lower Black Mallard River")
 pedigree.plot(ocq.plot,title = "Ocqueoc River")
+pedigree.plot(che.plot)
 dev.off()
 
 ##bayesmix figure

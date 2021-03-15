@@ -21,24 +21,45 @@ load("Input/rapture_panel_all_SNPs.rda")
 #merging with MAF data
 #should have a large table with all genotypes and three summary criteria
 
+#making ID column for genotypes and gdepth
+geno <- geno %>% 
+  mutate(ID=paste(CHROM,POS,sep="_")) %>% 
+  select(ID,everything()) %>% 
+  select(-CHROM,-POS)
+
+gdepth <- gdepth %>% 
+  mutate(ID=paste(CHROM,POS,sep="_")) %>% 
+  select(ID,everything()) %>% 
+  select(-CHROM,-POS)
+
+af <- af %>% 
+  mutate(ID=paste(Chrom_Pos,Pos,sep="_")) %>% 
+  select(ID,everything()) %>% 
+  select(-Chrom_Pos,-Pos)
+
+#replace -1 values with 0 in gdepth file
+gdepth[gdepth==-1]<-0
+
+##calculate mean depth for each individual
+
 #Checking MAF file: if there are MAF > 0.5, fix so they're < 0.5
-VCFstats$Min_AF2 <- VCFstats$Min_AF
-for(i in 1:length(VCFstats$Maj_AF)){
-  if (VCFstats$Min_AF[i] > 0.5) {
-    VCFstats$Min_AF2[i] <- 1-VCFstats$Min_AF[i]
+af$Min_AF2 <- af$Min_AF
+for(i in 1:length(af$Maj_AF)){
+  if (af$Min_AF[i] > 0.5) {
+    af$Min_AF2[i] <- 1-af$Min_AF[i]
   }
 }
 #check that all MAF values are below 0.5 and saving as an individual file
-max(VCFstats$Min_AF2)
-MAF <- data.frame(ID = VCFstats$ID, MAF = VCFstats$Min_AF2, stringsAsFactors = F)
+max(af$Min_AF2)
+MAF <- data.frame(ID = af$ID, MAF = af$Min_AF2, stringsAsFactors = F)
 
 #calculate heterozygosity
-n_indiv <- ncol(gt)-1
-stats <- data.frame(ID = gt$ID,stringsAsFactors = F)
-het_counts <- rowSums(gt == "0/1")
+n_indiv <- ncol(geno)-2
+stats <- data.frame(ID = geno$ID,stringsAsFactors = F)
+het_counts <- rowSums(geno == "0/1")
 stats$het <- het_counts/n_indiv
 #calculate percent coverage
-gt_missing <- rowSums(gt == "./.")
+gt_missing <- rowSums(geno == "./.")
 stats$pGT <- (1-(gt_missing/n_indiv))
 #merge with MAF
 stats <- merge(stats,MAF)
@@ -57,7 +78,7 @@ rapture1 <- rapture1 %>%
   separate(pos, into = c("min","max"),sep = "-") %>% 
   mutate(ID = paste0(CHROM,":",min,"-",max)) %>% 
   select(ID, CHROM, min, max)
-SNPs <- gt %>% 
+SNPs <- geno %>% 
   separate(ID,into = c("scaf","c","POS"),sep = "_") %>% 
   mutate(CHROM = paste0(scaf,"_",c)) %>% 
   select(CHROM,POS)
