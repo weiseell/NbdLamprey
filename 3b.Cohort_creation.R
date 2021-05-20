@@ -8,21 +8,19 @@ library(tidyverse)
 source("Homebrew/pedigree.plot.R")
 ##reading in data
 #load in data
-all_locs <- read.table("AgingModels/lw_Bayes_assignments.txt",header = T,sep = "\t",stringsAsFactors = F)
-all_locs <- all_locs %>% 
-  rename(OffspringID=ID)
+all_locs <- read.table("Aging_Models/lw_Bayes_assignments.txt",header = T,sep = "\t",stringsAsFactors = F)
 #note - BestConfig files were reformatted to be tab delimited and 
 #special characters in the file were removed prior to load
 #identify locations with multiple inferred cohorts
 all_locs %>% 
   group_by(samp) %>% 
   summarise(nclust=length(unique(clust)),ss=n(),max_len = max(Length))
-locs <- c("CAT","MAN","MIR","TWO")
+locs <- c("BMR","CHE","OCQ")
 best_config <- data.frame(matrix(ncol=5,nrow = 0))
 #read in pedigree data for locations with multiple inferred cohorts
 for (i in 1:length(locs)) {
   print(i)
-  df <- readLines(paste0("SoftwareOutput/",locs[i],".Output.data.BestCluster"))
+  df <- readLines(paste0("Software_outputs/",locs[i],".Output.data.BestCluster"))
   #separate file into usable data frame
   df <- strsplit(df,"\\s+")
   df1 <- matrix(unlist(df),byrow = T)
@@ -34,73 +32,84 @@ for (i in 1:length(locs)) {
 
   best_config <- rbind(best_config,df1)
 }
-df <- merge(best_config,all_locs)
+
 #adding ages to model results
 df %>% 
-  group_by(loc,clust) %>% 
+  group_by(samp,clust) %>% 
   summarise(ss=n(),max_len = max(Length))
 
-df <- merge(all_locs,best_config)
+df <- merge(best_config,all_locs)
+df$full_sib <- paste(df$MotherID,df$FatherID,sep = "_")
 ##splitting pedigrees by collection and length cluster
-#MIR
-mir.1 <- subset(df,df$samp == "MIR_2017" & df$clust == "clust1")
-mir.1$cohort <- "2016"
-mir.2 <- subset(df,df$samp == "MIR_2017" & df$clust == "clust2")
-mir.2$cohort <- "2015"
-mir.3 <- subset(df,df$samp == "MIR_2017" & df$clust == "clust3")
-mir.3$cohort <- "2014"
-mir <- rbind(mir.1,mir.2,mir.3)
-#MAN
-man.1 <- subset(df,df$samp == "MAN_2019" & df$clust == "clust1")
-man.1$cohort <- "2018"
-man.2 <- subset(df,df$samp == "MAN_2019" & df$clust == "clust2")
-man.2$cohort <- "2017"
-man <- rbind(man.1,man.2)
-#TWO
-two.1 <- subset(df,df$samp == "TWO_2019" & df$clust == "clust2")
-two.1$cohort <- "2018"
-two.2 <- subset(df,df$samp == "TWO_2019" & df$clust == "clust3")
-two.2$cohort <- "2017"
-two <- rbind(two.1,two.2)
+#BMR 2018
+bmr18.1 <- subset(df,df$samp == "BMR_2018" & df$clust == "clust1")
+bmr18.1$cohort <- "2016"
+bmr18.2 <- subset(df,df$samp == "BMR_2018" & df$clust == "clust2")
+bmr18.2$cohort <- "2015"
+bmr18.3 <- subset(df,df$samp == "BMR_2018" & df$clust == "clust3")
+bmr18.3$cohort <- "2014"
+bmr18 <- rbind(bmr18.1,bmr18.2,bmr18.3)
+#BMR 2017
+bmr17.1 <- subset(df,df$samp == "BMR_2017" & df$clust == "clust1")
+bmr17.1$cohort <- "2016"
+bmr17.2 <- subset(df,df$samp == "BMR_2017" & df$clust == "clust2")
+bmr17.2$cohort <- "2015"
+bmr17 <- rbind(bmr17.1,bmr17.2)
 
 ##quantifying family relationships across clusters
-#MIR
+#BMR 18
 #testing overlap
-table(mir$ClusterIndex)
-table(mir.1$ClusterIndex%in%mir.2$ClusterIndex)
-table(mir.1$ClusterIndex%in%mir.3$ClusterIndex)
-table(mir.2$ClusterIndex%in%mir.3$ClusterIndex)
-bmr_sing <- mir.1[!(mir.1$ClusterIndex %in% mir.2$ClusterIndex),]
+table(bmr18$ClusterIndex)
+table(bmr18.1$ClusterIndex%in%bmr18.2$ClusterIndex)
+table(bmr18.1$ClusterIndex%in%bmr18.3$ClusterIndex)
+table(bmr18.2$ClusterIndex%in%bmr18.3$ClusterIndex)
+bmr_sing <- bmr18.1[!(bmr18.1$ClusterIndex %in% bmr18.2$ClusterIndex),]
 bmr_sing <- rbind(bmr_sing,bmr18[bmr18$ClusterIndex %in% bmr_sing$ClusterIndex,])
 
 #comparing families
-table(mir.1$ClusterIndex)
-table(mir.2$ClusterIndex)
-table(mir.3$ClusterIndex)
+table(bmr18.1$ClusterIndex)
+table(bmr18.2$ClusterIndex)
+table(bmr18.3$ClusterIndex)
 
-ggplot(mir,aes(x=ClusterIndex,y=Length,color=cohort))+
+ggplot(bmr18,aes(x=ClusterIndex,y=Length,color=cohort))+
   geom_point()+theme_bw()
-##man
+
+ggplot(bmr18,aes(x=full_sib,y=Length,color=cohort))+
+  geom_point()+theme_bw()
+
+#compare full-sibling groups
+table(bmr18$full_sib)
+table(bmr18.1$full_sib)
+table(bmr18.2$full_sib)
+table(bmr18.3$full_sib)
+table(bmr18.1$full_sib%in%bmr18.2$full_sib)
+table(bmr18.1$full_sib%in%bmr18.3$full_sib)
+table(bmr18.3$full_sib%in%bmr18.2$full_sib)
+
+#BMR 17
 #testing overlap
-table(man$ClusterIndex)
-table(man.1$ClusterIndex%in%man.2$ClusterIndex)
-#comparing families
-table(man.1$ClusterIndex)
-table(man.2$ClusterIndex)
+table(bmr17$ClusterIndex)
+table(bmr17.1$ClusterIndex%in%bmr17.2$ClusterIndex)
+table(bmr17.2$ClusterIndex%in%bmr17.1$ClusterIndex)
+bmr_sing <- bmr17.1[!(bmr17.1$ClusterIndex %in% bmr17.2$ClusterIndex),]
+bmr_sing <- rbind(bmr_sing,bmr17[bmr17$ClusterIndex %in% bmr_sing$ClusterIndex,])
 
-ggplot(man,aes(x=ClusterIndex,y=Length,color=cohort))+
+#comparing families
+table(bmr17.1$ClusterIndex)
+table(bmr17.2$ClusterIndex)
+
+ggplot(bmr17,aes(x=ClusterIndex,y=Length,color=cohort))+
   geom_point()+theme_bw()
 
-##two
-#testing overlap
-table(two$ClusterIndex)
-table(two.2$ClusterIndex%in%two.1$ClusterIndex)
-#comparing families
-table(two.1$ClusterIndex)
-table(two.2$ClusterIndex)
-
-ggplot(two,aes(x=ClusterIndex,y=Length,color=cohort))+
+ggplot(bmr17,aes(x=full_sib,y=Length,color=cohort))+
   geom_point()+theme_bw()
+
+#compare full-sibling groups
+table(bmr17$full_sib)
+table(bmr17.1$full_sib)
+table(bmr17.2$full_sib)
+table(bmr17.1$full_sib%in%bmr17.2$full_sib)
+table(bmr17.2$full_sib%in%bmr17.1$full_sib)
 
 ##family diagrams
 all_families1 <- all_families %>% 

@@ -1,0 +1,54 @@
+---
+title: "NbdLamprey: Making SNP sets and Calculating Genetic Estimates"
+subtitle: "A Test Case with the Ocqueoc River"
+output: html_notebook
+---
+
+###
+```{r}
+
+```
+
+
+###Selecting SNPs for Parentage analysis
+```{r}
+
+```
+
+###Looking at Reconstructed Pedigrees
+```{r}
+
+```
+
+###Cohort Creation
+```{r}
+
+```
+
+###Calculating Nb and Ns
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
