@@ -34,10 +34,6 @@ for (i in 1:length(locs)) {
 }
 
 #adding ages to model results
-df %>% 
-  group_by(samp,clust) %>% 
-  summarise(ss=n(),max_len = max(Length))
-
 df <- merge(best_config,all_locs)
 df$full_sib <- paste(df$MotherID,df$FatherID,sep = "_")
 ##splitting pedigrees by collection and length cluster
@@ -55,7 +51,9 @@ bmr17.1$cohort <- "2016"
 bmr17.2 <- subset(df,df$samp == "BMR_2017" & df$clust == "clust2")
 bmr17.2$cohort <- "2015"
 bmr17 <- rbind(bmr17.1,bmr17.2)
-
+bmr <- rbind(bmr17,bmr18)
+bmr19 <- subset(df,df$samp == "BMR_2019")
+ocq <- subset(df,df$samp == "OCQ_2018")
 ##quantifying family relationships across clusters
 #BMR 18
 #testing overlap
