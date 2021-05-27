@@ -163,6 +163,9 @@ indNames(snp) <- indiv
 save(snp,file = "genlight_pca_BMR.RData")
 #running PCA analysis
 #getting colors
+locs <- data.frame(spp=snp@pop,stringsAsFactors = F)
+locs <- locs %>% 
+  select(spp)
 locs$col <- NA
 for(i in 1:length(locs$spp)){
   if(locs$spp[i] == "LA"){locs$col[i] <- "blue"}
@@ -170,15 +173,16 @@ for(i in 1:length(locs$spp)){
   if(locs$spp[i] == "PM"){locs$col[i] <- "purple"}
 }
 
-#run pca
-#check prcomp function with the output x for the PCA components
-pca <- glPca(snp,nf = 10)
-save(pca,file = "SNPsets/pca_BMR.RData")
 #plot pca
+tiff(filename = "Figures/BMR_PCA_plot.tiff",width = 5,height = 5,units = "in",res = 400)
 plot(pca$scores[,1], pca$scores[,2],
      col=locs$col,cex=0.5)
-plot(pca$scores[,1], pca$scores[,3],
-     col=locs$col,cex=0.5)
+text(x = 0, y = 0, "P.marinus", pos =4, col = "purple",cex = 0.8)
+text(x = 90, y = -40, "I.fosser", pos =1, col = "dark green",cex = 0.8)
+text(x = 90, y = 55, "L.appendix", pos =3, col = "blue",cex = 0.8)
+title("Black Mallard River")
+dev.off()
+
 #make a tree
 #construct tree
 tre <- nj(dist(as.matrix(snp)))
@@ -247,6 +251,9 @@ indNames(snp) <- indiv
 save(snp,file = "genlight_pca_ocq.RData")
 #running PCA analysis
 #getting colors
+locs <- data.frame(spp=snp@pop,stringsAsFactors = F)
+locs <- locs %>% 
+  select(spp)
 locs$col <- NA
 for(i in 1:length(locs$spp)){
   if(locs$spp[i] == "LA"){locs$col[i] <- "blue"}
@@ -254,14 +261,16 @@ for(i in 1:length(locs$spp)){
   if(locs$spp[i] == "PM"){locs$col[i] <- "purple"}
 }
 
-#run pca
-pca <- glPca(snp,nf = 10)
-save(pca,file = "SNPsets/pca_ocq.RData")
 #plot pca
+tiff(filename = "Figures/OCQ_PCA_plot.tiff",width = 5,height = 5,units = "in",res = 400)
 plot(pca$scores[,1], pca$scores[,2],
      col=locs$col,cex=0.5)
-plot(pca$scores[,1], pca$scores[,3],
-     col=locs$col,cex=0.5)
+text(x = 0, y = 0, "P.marinus", pos =4, col = "purple",cex = 0.8)
+text(x = 90, y = 50, "I.fosser", pos =1, col = "dark green",cex = 0.8)
+text(x = 90, y = -60, "L.appendix", pos =3, col = "blue",cex = 0.8)
+title("Ocqueoc River")
+dev.off()
+
 #make a tree
 #construct tree
 tre <- nj(dist(as.matrix(snp)))
@@ -272,11 +281,13 @@ plot(tre, typ="fan", cex=0.7)
 che <- nl[,grep(pattern = "CHE",x=colnames(nl),ignore.case = T)]
 che <- data.frame(CHROM=nl$CHROM,POS=nl$POS,che)
 
+#subset to only include Pigeon River samples
+che <- che[,c(1:26,28:29)]
 #get SNPs for sea lamrpey and combine with native lamprey
 pm_gts <- merge(nl_SNPs,che)
 chesums <- colSums(che == "./.")
 gt_missing <- rowSums(che == "./.")
-che$pGT <- (1-(gt_missing/52))
+che$pGT <- (1-(gt_missing/26))
 
 #select SNPs with minimal missing data
 che_SNPs <- che %>% filter(pGT > 0.7) %>% select(CHROM,POS)
@@ -284,7 +295,6 @@ target <- match_tags(SNPs = che_SNPs,tags = rapture)
 target1 <- target[[2]]
 che_targets <- merge(target1,che)
 
-all_SNPs <- merge(che_targets,nl_targets)
 all_SNPs <- che_targets %>% 
   full_join(nl_targets, by = c("CHROM","POS","target"))
 
@@ -329,7 +339,14 @@ snp <- new("genlight",
 indNames(snp) <- indiv
 save(snp,file = "genlight_pca_che.RData")
 #running PCA analysis
+#run pca
+pca <- glPca(snp,nf = 10)
+save(pca,file = "SNPsets/pca_che.RData")
+
 #getting colors
+locs <- data.frame(spp=snp@pop,stringsAsFactors = F)
+locs <- locs %>% 
+  select(spp)
 locs$col <- NA
 for(i in 1:length(locs$spp)){
   if(locs$spp[i] == "LA"){locs$col[i] <- "blue"}
@@ -337,14 +354,16 @@ for(i in 1:length(locs$spp)){
   if(locs$spp[i] == "PM"){locs$col[i] <- "purple"}
 }
 
-#run pca
-pca <- glPca(snp,nf = 10)
-save(pca,file = "SNPsets/pca_che.RData")
+
 #plot pca
+tiff(filename = "Figures/CHE_PCA_plot.tiff",width = 5,height = 5,units = "in",res = 400)
 plot(pca$scores[,1], pca$scores[,2],
      col=locs$col,cex=0.5)
-plot(pca$scores[,1], pca$scores[,3],
-     col=locs$col,cex=0.5)
+text(x = 0, y = -40, "P.marinus", pos = 2, col = "purple",cex = 0.8)
+text(x = -50, y = 25, "I.fosser", pos = 3, col = "dark green",cex = 0.8)
+text(x = 100, y = 20, "L.appendix", pos = 2, col = "blue",cex = 0.8)
+title("Cheboyan River")
+dev.off()
 #make a tree
 #construct tree
 tre <- nj(dist(as.matrix(snp)))
