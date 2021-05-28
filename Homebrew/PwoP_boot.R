@@ -3,8 +3,6 @@
 
 #Inputs:
 #
-
-
 PwoP_boot <- function(family,iter,alpha,real_Nb){
   n_fam <- length(family$FatherID)
   boot_Nb <- numeric(iter)

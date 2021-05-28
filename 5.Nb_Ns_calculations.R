@@ -8,7 +8,7 @@ library(tidyverse)
 library(ggrepel)
 #homebrew functions
 source("Homebrew/PwoP.R")
-source("Homebrew/PwoP_boot.R")
+source("Homebrew/PwoP_uncert.R")
 source("Homebrew/Ns_calc.R")
 source("Homebrew/multiplot.R")
 #load in data
@@ -16,6 +16,7 @@ load("Aging_Models/Family_data_all_locations.rda")
 
 #prepping lists for storing results
 locs <- unique(all_families$loc)
+ca_names <- c("bmr15","bmr16","bmral","chePR","ocq")
 names(loc_names) <- locs
 Nb_PwoP_all <- data.frame(matrix(data = NA, nrow = length(locs), ncol = 6))
 colnames(Nb_PwoP_all) <- c("loc","Nb","kbar","Vk", "CI_Lower", "CI_Upper")
@@ -29,7 +30,8 @@ for (i in 1:length(locs)) {
   ltmp <- locs[i]
   tmp <- subset(all_families,all_families$loc == ltmp)
   PwoP_tmp <- PwoP(tmp)
-  uncert <- PwoP_boot(tmp,iter = 1000,alpha = 0.05, real_Nb = PwoP_tmp["Nb"])
+  ca_tmp <- readLines(paste0("Software_outputs/",ca_names[i],".ConfigArchive"))
+  uncert <- PwoP_uncert(ca,tmp)
   names(uncert) <- c("CI_Lower","CI_Upper")
   tmp1 <- c(PwoP_tmp,uncert)
   Nb_PwoP_all[i,] <- c(ltmp,tmp1)
