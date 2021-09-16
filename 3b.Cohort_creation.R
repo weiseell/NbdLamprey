@@ -15,12 +15,12 @@ all_locs <- read.table("Aging_Models/lw_Bayes_assignments.txt",header = T,sep = 
 all_locs %>% 
   group_by(samp) %>% 
   summarise(nclust=length(unique(clust)),ss=n(),max_len = max(Length))
-locs <- c("BMR","CHE","OCQ")
+locs <- c("BMR","CHE")
 best_config <- data.frame(matrix(ncol=5,nrow = 0))
 #read in pedigree data for locations with multiple inferred cohorts
 for (i in 1:length(locs)) {
   print(i)
-  df <- readLines(paste0("Software_outputs/",locs[i],".Output.data.BestCluster"))
+  df <- readLines(paste0("Software_outputs/",locs[i],"_Output.data.BestCluster"))
   #separate file into usable data frame
   df <- strsplit(df,"\\s+")
   df1 <- matrix(unlist(df),byrow = T)
@@ -54,6 +54,8 @@ bmr17 <- rbind(bmr17.1,bmr17.2)
 bmr <- rbind(bmr17,bmr18)
 bmr19 <- subset(df,df$samp == "BMR_2019")
 ocq <- subset(df,df$samp == "OCQ_2018")
+che <- subset(df,df$samp == "CHE_2018")
+chePR <- che[che$Sample_number < 542 | che$Sample_number == 544,]
 ##quantifying family relationships across clusters
 #BMR 18
 #testing overlap
@@ -109,6 +111,11 @@ table(bmr17.2$full_sib)
 table(bmr17.1$full_sib%in%bmr17.2$full_sib)
 table(bmr17.2$full_sib%in%bmr17.1$full_sib)
 
+#generate cohort sets
+bmr_cohort16 <- bmr17.1
+bmr_cohort16$cohort <- "BMR_2016"
+bmr_cohort15 <- rbind(bmr17.2,bmr18)
+bmr_cohort15$cohort <- "BMR_2015"
 ##family diagrams
 all_families1 <- all_families %>% 
   select(OffspringID,MotherID,FatherID,ClusterIndex,clust,samp,cohort)
@@ -122,7 +129,6 @@ tiff(filename = "Figures/Pedigree_plots.tiff",width = 10,height = 8,units = "in"
 par(mfrow=c(1,2))
 pedigree.plot(bmr.plot,title = "Lower Black Mallard River")
 pedigree.plot(ocq.plot,title = "Ocqueoc River")
-pedigree.plot(che.plot)
 dev.off()
 
 ##bayesmix figure

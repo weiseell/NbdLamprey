@@ -32,7 +32,7 @@ RMclust <- vector(mode = "list", length = length(samples))
 BDclust <- vector(mode = "list", length = length(samples))
 names(RMclust) <- samples
 names(BDclust) <- samples
-i <- 1
+i <- 4
 for(i in 1:length(samples)){
   samp_i <- samples[i]
   tmp <- subset(df1, df1$samp == samp_i)
@@ -107,8 +107,8 @@ bmix_vals %>% group_by(kval) %>% summarise(weightsum=sum(weight),prop = sum(weig
 
 
 ##3. Bayes models for all locations ####
-i <- 1
-bestk <- c(1,2,2,2,2)
+i <- 4
+bestk <- c(1,1,2,2,1)
 Bmodels <- vector(mode = "list", length = length(samples))
 names(Bmodels) <- samples
 
@@ -131,14 +131,12 @@ for (i in 1:length(samples)) {
 }
 
 #sorting for models with multiple cohorts
-Bmodels[["CHE_2018"]] <- Sort(Bmodels[["CHE_2018"]],by = "mu")
 Bmodels[["BMR_2017"]] <- Sort(Bmodels[["BMR_2017"]],by = "mu")
 Bmodels[["BMR_2018"]] <- Sort(Bmodels[["BMR_2018"]],by = "mu")
-Bmodels[["BMR_2019"]] <- Sort(Bmodels[["BMR_2019"]],by = "mu")
 
 BayesAssign <- vector(mode = "list", length = length(samples))
 names(BayesAssign) <- samples
-i <- 1
+i <- 4
 for (i in 1:length(samples)) {
   samp_i <- samples[i]
   tmp <- subset(df1, df1$samp == samp_i)
@@ -161,7 +159,7 @@ for (i in 1:length(samples)) {
     }
   }
   if(bestk[i] == 1){
-    tmp$clust <- "clust1"
+    tmp$clust <- "clust0"
   }
   BayesAssign[[samp_i]] <- tmp
 }
@@ -185,17 +183,33 @@ tmp.2 <- subset(tmp,tmp$clust == "clust2")
 
 
 ##4. Plotting all models ####
+all_locs_Bayes <- read.table("Aging_Models/lw_Bayes_assignments.txt",header = T)
+all_locs_Bayes <- subset(all_locs_Bayes,all_locs_Bayes$samp != "BMR_2018")
+#BayesAssign[["BMR_2018"]] <- BayesAssign[["BMR_2018"]] %>% rename(OffspringID=ID)
+all_locs_Bayes <- rbind(all_locs_Bayes,BayesAssign[["BMR_2018"]])
+all_locs_Bayes$clust[which(all_locs_Bayes$samp == "CHE_2018")] <- "clust0"
+all_locs_Bayes$clust[which(all_locs_Bayes$samp == "BMR_2019")] <- "clust0"
 #labels for plot
+all_locs_Bayes$samp <- factor(all_locs_Bayes$samp,
+                            levels = c("BMR_2017","BMR_2018","BMR_2019","OCQ_2018","CHE_2018"),
+                            labels = c("Lower Black Mallard - 2017 Collection","Lower Black Mallard - 2018 Collection","Upper Black Mallard - 2019 Collection","Ocqueoc River - 2018 Collection","Pigeon River - 2018 Collection"))
+tiff(filename = "Figures/Length_Histogram_plot.tiff",width = 4,height = 6,units = "in",res = 400)
 ggplot(all_locs_Bayes, aes(x=Length, fill = clust)) +
+  facet_wrap(~samp, scales = "free_y",ncol = 1) +
+  geom_histogram(aes(fill = factor(clust)),bins = 50) +
+  scale_fill_manual(values = c("grey","#74a9cf","#034e7b"),
+                    guide = F)+
+  labs(x="Length (mm)",y="counts")+
+  theme_bw(base_size = 8)
+dev.off()
+
+ggplot(BayesAssign[["BMR_2018"]], aes(x=Length, fill = clust)) +
   facet_wrap(~samp, scales = "free_y") +
   geom_histogram(aes(fill = factor(clust)),bins = 50) +
   scale_fill_manual(values = c("#000000","#cccccc","#969696"),
                     guide = F)+
   labs(x="Length (mm)",y="counts")+
   theme_bw(base_size = 8)
-
-
-
 
 
 

@@ -12,7 +12,7 @@ source("Homebrew/colonydat_create.R")
 #load input data:
 load("Summary_Stats/SNP_summaries_targets.rda")
 load("Input_fulldata/gt_summary_stats.rda")
-load("Input_fulldata/gt_filtered.rda")
+load("Input_fulldata/GTs.all.rda")
 
 #Goal 1####
 #Selecting loci for pedigree methods
@@ -20,9 +20,9 @@ load("Input_fulldata/gt_filtered.rda")
 #also want to maximize MAF and coverage for selected SNPs
 #prefilter for Rapture tag SNPs and minimum MAF of 0.05
 prefilter <- SNPsumm %>% 
-  filter(target != "NonTarget") %>% 
-  filter(MAF > 0.05)
-Col_select <- COLONY_filter(geno1,window = 1000000,pGT_min = 0.8,MAF_min = 0.05)
+  filter(target != "NonTarget")
+#prefilter <- prefilter[grep(pattern = "scaf",SNPsumm$CHROM),]
+Col_select <- COLONY_filter(SNPsumm,window = 500000,pGT_min = 0.8,MAF_min = 0.05)
 #a few summary histograms to look at the SNP set
 hist(Col_select$MAF,xlim = c(0,0.5))
 hist(Col_select$pGT)

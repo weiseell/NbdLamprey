@@ -7,17 +7,16 @@ library(tidyverse)
 #load homebrew functions
 source("Homebrew/multiplot.R")
 #load best cluster data
-bmr_clust <- read.table(file = "Software_outputs/bmr_BestCluster_091820.txt",header = T, sep = "\t",stringsAsFactors = F)
-ocq_clust <- read.table(file = "Software_outputs/ocq_BestCluster_091820.txt",header = T, sep = "\t",stringsAsFactors = F)
+bmr_clust <- read.table(file = "Software_outputs/BMR_Output.data.BestCluster",header = T, sep = "\t",stringsAsFactors = F)
+ocq_clust <- read.table(file = "Software_outputs/OCQ_Output.data.BestCluster",header = T, sep = "\t",stringsAsFactors = F)
 load("Aging_Models/Family_data_all_locations.rda")
-
+all_families <- all_families %>% select(-FatherID:-ClusterIndex)
 clust_all <- rbind(ocq_clust,bmr_clust)
-clust_all1 <- merge(clust_all,all_families)
+clust_all1 <- all_families %>% full_join(clust_all,by = c("OffspringID"))
 
 #Black Mallard
 bmr1 <- clust_all1 %>% 
-  filter(loc != "bmrAL") %>% 
-  filter(loc != "OCQ")
+  filter(samp == "BMR_2017" | samp == "BMR_2018")
 
 collect.labs <- c("2017 Collection","2018 Collection")
 names(collect.labs) <- c("BMR_2017", "BMR_2018")
@@ -28,7 +27,7 @@ bmr_plot <- ggplot(bmr1,aes(x=ClusterIndex,group=ClusterIndex,y=Length,fill=Prob
   scale_fill_gradient(low="red", high="white",name = "Cluster \nLikelihood")+
   xlab("Family Cluster")+
   ylab("Length (mm)")+
-  ggtitle("A) Downstream Black Mallard River")
+  ggtitle("A) Lower Black Mallard River")
 
 #Ocqueoc
 ocq1 <- clust_all1 %>% 
@@ -46,6 +45,6 @@ ocq_plot <- ggplot(ocq1,aes(x=ClusterIndex,group=ClusterIndex,y=Length,fill=Prob
   ggtitle("B) Ocqueoc River")
 
 #putting plots together
-tiff(filename = "Figures/Length_Boxplots_prob.tiff",height = 10,width = 10,units = "in",res = 200)
+tiff(filename = "Figures/Length_Boxplots_prob.tiff",height = 8,width = 8,units = "in",res = 200)
 multiplot(cols = 1,bmr_plot,ocq_plot)
 dev.off()

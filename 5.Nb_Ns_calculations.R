@@ -12,26 +12,26 @@ source("Homebrew/PwoP_uncert.R")
 source("Homebrew/Ns_calc.R")
 source("Homebrew/multiplot.R")
 #load in data
-load("Aging_Models/Family_data_all_locations.rda")
 
 #prepping lists for storing results
-locs <- unique(all_families$loc)
-ca_names <- c("bmr15","bmr16","bmral","chePR","ocq")
-names(loc_names) <- locs
+locs <- unique(all_families$cohort)
+ca_names <- c("bmr15","bmr16","bmral","chePR","OCQ")
+names(ca_names) <- locs
 Nb_PwoP_all <- data.frame(matrix(data = NA, nrow = length(locs), ncol = 6))
 colnames(Nb_PwoP_all) <- c("loc","Nb","kbar","Vk", "CI_Lower", "CI_Upper")
 Ns_all <- data.frame(matrix(data = NA, nrow = length(locs), ncol = 6))
 colnames(Ns_all) <- c("loc","Ns" ,"Ns_Chao","Chao_uncert","Ns_Jackknife","Jackknife_uncert")
 
 #loop to calculate Nb - PwoP and extrapolated Ns
-i <- 1
+i <- 2
 for (i in 1:length(locs)) {
+  print(i)
   #PwoP
   ltmp <- locs[i]
-  tmp <- subset(all_families,all_families$loc == ltmp)
+  tmp <- subset(all_families,all_families$cohort == ltmp)
   PwoP_tmp <- PwoP(tmp)
-  ca_tmp <- readLines(paste0("Software_outputs/",ca_names[i],".ConfigArchive"))
-  uncert <- PwoP_uncert(ca,tmp)
+  ca_tmp <- readLines(paste0("Software_outputs/",ca_names[i],"_Output.data.ConfigArchive"))
+  uncert <- PwoP_uncert(ca_tmp,tmp)
   names(uncert) <- c("CI_Lower","CI_Upper")
   tmp1 <- c(PwoP_tmp,uncert)
   Nb_PwoP_all[i,] <- c(ltmp,tmp1)

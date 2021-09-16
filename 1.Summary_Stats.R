@@ -7,13 +7,15 @@
 library(tidyverse)
 
 #load homebrew functions:
-source("Homebrew/gt_SNP_stats.R")
 source("Homebrew/match_tags.R")
 
 #load input data:
-load("Input/test_genotypes.rda")
-load("Input/test_MAF.rda")
-load("Input/test_depths.rda")
+geno <- read.table("Input_062421/GT_8X.GT.FORMAT",header = T,sep = "\t")
+save(geno,file = "Input_fulldata/GTs.all.rda")
+af <- read.table("Input_062421/allele.frq",header = T,sep = "\t")
+save(af,file = "Input_fulldata/MAF.all.rda")
+gdepth <- read.table("Input_fulldata/depth.gdepth",header = T,sep = "\t")
+save(gdepth,file = "Input_fulldata/depth.all.rda")
 load("Input/rapture_panel_all_SNPs.rda")
 
 #Goal 1####
@@ -33,13 +35,18 @@ gdepth <- gdepth %>%
   select(-CHROM,-POS)
 
 af <- af %>% 
-  mutate(ID=paste(Chrom_Pos,Pos,sep="_")) %>% 
+  mutate(ID=paste(CHROM,POS,sep="_")) %>% 
   select(ID,everything()) %>% 
-  select(-Chrom_Pos,-Pos)
+  select(-CHROM,-POS)
 
 #replace -1 values with 0 in gdepth file
 gdepth[gdepth==-1]<-0
-
+#mean depth per SNP
+rownames(gdepth) <- gdepth$ID
+mean_depth <- rowMeans(gdepth[,-c(1)])
+hist(mean_depth)
+#!#resave gdepth .Rdata object because this can take a long time
+save(gdepth,file = "Input_fulldata/depth.all.rda")
 ##calculate mean depth for each individual
 
 #Checking MAF file: if there are MAF > 0.5, fix so they're < 0.5
@@ -50,8 +57,8 @@ for(i in 1:length(af$Maj_AF)){
   }
 }
 #check that all MAF values are below 0.5 and saving as an individual file
-max(af$Min_AF2)
-MAF <- data.frame(ID = af$ID, MAF = af$Min_AF2, stringsAsFactors = F)
+max(af$MinAF)
+MAF <- data.frame(ID = af$ID, MAF = af$MinAF, stringsAsFactors = F)
 
 #calculate heterozygosity
 n_indiv <- ncol(geno)-2
