@@ -1,0 +1,22 @@
+Output from NeEstimator v2.1
+Starting time: Mon Jun 28 18:34:31 2021
+Input File: "BMR_Neestimator_062421.txt"
+
+Number of Loci = 3087
+
+
+Mating Model: Random
+
+Lowest allele frequency used:    0.0500
+Up to 17 righmost characters can be shown for population names.
+-------------------------------------------------------------------------------------------------------------------------
+Population #   Samp  Weighted      #Indep.   r^2     Exp(r^2)       Ne^                 CIs for Ne^
+then by :Name  Size  H. Mean       Alleles            Sample                    Parametric       Jackknife Samp  (Eff.df)
+-------------------------------------------------------------------------------------------------------------------------
+1:PM_BMR_017  1024    846.3        8668  0.013599  0.001166       24.5      23.7      25.4      22.7      26.5      1934
+2:PM_BMR_002    14     11.5        6877  0.151598  0.109488        4.7       3.3       5.9       2.2      13.4       289
+3:M_BMR_1055    34     27.9       10467  0.087066  0.037902        3.1       3.0       3.3       2.4       5.9       337
+
+Ending time: Mon Jun 28 18:34:52 2021
+-------------------------------------
+

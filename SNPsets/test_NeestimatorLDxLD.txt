@@ -1,0 +1,10 @@
+Output from NeEstimator v2.1
+Starting time: Tue Jun  8 13:30:26 2021
+Input File: "test_Neestimator.txt"
+
+Number of Loci = 3000
+
+
+Ending time: Tue Jun  8 13:30:26 2021
+-------------------------------------
+

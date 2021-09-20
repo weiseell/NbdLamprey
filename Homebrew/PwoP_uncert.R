@@ -1,5 +1,6 @@
 #separate config archive in a loop and calculate PwoP on all of them
 PwoP_uncert <- function(ca,bc){
+  require(tidyverse)
   #read in source
   source("Homebrew/PwoP.R")
   #create Config Archive list
@@ -26,12 +27,12 @@ PwoP_uncert <- function(ca,bc){
   }
   
   #simulate data and calculate PwoP on those
-  PwoP_sim <- data.frame(matrix(data = NA, nrow = 100, ncol = 3))
+  PwoP_sim <- data.frame(matrix(data = NA, nrow = 1000, ncol = 3))
   colnames(PwoP_sim) <- c("Nb","kbar","Vk")
   i <- 1
   trueNb <- PwoP(bc)
   
-  for (i in 1:length(Configs)) {
+  for (i in 1:1000) {
     npar <- round(trueNb["Nb"]/2)
     family <- data.frame(matrix(data = NA, nrow = length(bc$OffspringID), ncol = 3))
     names(family) <- c("OffspringID","FatherID","MotherID")
@@ -42,12 +43,12 @@ PwoP_uncert <- function(ca,bc){
   }
   
   #combine Vc and Vg to get total variance
-  Vg <- var(PwoP_ca$Nb)
-  Vc <- var(PwoP_sim$Nb)
-  UCI <- (1/(2*trueNb["Nb"]))+1.96*sqrt(Vg+Vc)
-  UCI <- trueNb["Nb"]+(1/UCI)/2
-  LCI <- (1/(2*trueNb["Nb"]))-1.96*sqrt(Vg+Vc)
-  LCI <- trueNb["Nb"]+(1/LCI)/2
+  Vg <- var(1/(2*PwoP_sim$Nb))
+  Vs <- var(1/(2*PwoP_ca$Nb))
+  LCIrecip <- 1/(2*trueNb["Nb"]) + 1.96*sqrt(Vg+Vs)
+  LCI <- 0.5/LCIrecip
+  UCIrecip <- 1/(2*trueNb["Nb"]) - 1.96*sqrt(Vg+Vs) 
+  UCI <- 0.5/UCIrecip  
   
   conf_int <- c(LCI,UCI)
   names(conf_int) <- c("LCI","UCI")
