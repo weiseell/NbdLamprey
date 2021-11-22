@@ -15,7 +15,7 @@ all_locs <- read.table("Aging_Models/lw_Bayes_assignments.txt",header = T,sep = 
 all_locs %>% 
   group_by(samp) %>% 
   summarise(nclust=length(unique(clust)),ss=n(),max_len = max(Length))
-locs <- c("BMR","CHE")
+locs <- c("BMR","CHE","OCQ")
 best_config <- data.frame(matrix(ncol=5,nrow = 0))
 #read in pedigree data for locations with multiple inferred cohorts
 for (i in 1:length(locs)) {
@@ -92,7 +92,6 @@ table(bmr17$ClusterIndex)
 table(bmr17.1$ClusterIndex%in%bmr17.2$ClusterIndex)
 table(bmr17.2$ClusterIndex%in%bmr17.1$ClusterIndex)
 bmr_sing <- bmr17.1[!(bmr17.1$ClusterIndex %in% bmr17.2$ClusterIndex),]
-bmr_sing <- rbind(bmr_sing,bmr17[bmr17$ClusterIndex %in% bmr_sing$ClusterIndex,])
 
 #comparing families
 table(bmr17.1$ClusterIndex)
@@ -111,11 +110,34 @@ table(bmr17.2$full_sib)
 table(bmr17.1$full_sib%in%bmr17.2$full_sib)
 table(bmr17.2$full_sib%in%bmr17.1$full_sib)
 
+#comparing between collections
+table(bmr17.1$ClusterIndex%in%bmr18.1$ClusterIndex)
+table(bmr17.1$ClusterIndex%in%bmr18.2$ClusterIndex)
+table(bmr17.1$ClusterIndex%in%bmr18.3$ClusterIndex)
+
 #generate cohort sets
-bmr_cohort16 <- bmr17.1
-bmr_cohort16$cohort <- "BMR_2016"
-bmr_cohort15 <- rbind(bmr17.2,bmr18)
-bmr_cohort15$cohort <- "BMR_2015"
+
+bmr_cohort16 <- bmr[which(bmr$ClusterIndex == "2" | bmr$ClusterIndex == "3" | bmr$ClusterIndex == "13"),]
+bmr_cohort16$newcohort <- "BMR_2016"
+bmr_cohort15 <- bmr[which(!(bmr$OffspringID %in% bmr_cohort16$OffspringID)),]
+bmr_cohort15$newcohort <- "BMR_2015"
+
+#combining all locations into one data frame
+#!# only chePR individuals are included because the others were not used in the analysis
+ocq$newcohort <- "OCQ16"
+ocq$cohort <- "2016"
+chePR$newcohort <- "chePR"
+chePR$cohort <- "2016"
+bmr19$newcohort <- "BMRal"
+bmr19$cohort <- "2015"
+all_families <- rbind(bmr_cohort15,bmr_cohort16,bmr19,chePR,ocq)
+
+##generate the number of full-siblings and the number of clusters in each group
+all_families %>% 
+  group_by(newcohort) %>% 
+  summarise(sampsize=n(),
+            nfullsibs=length(unique(full_sib)),
+            nclust=length(unique(ClusterIndex)))
 ##family diagrams
 all_families1 <- all_families %>% 
   select(OffspringID,MotherID,FatherID,ClusterIndex,clust,samp,cohort)
@@ -133,7 +155,7 @@ dev.off()
 
 ##bayesmix figure
 all_families$samp <- factor(all_families$samp,
-                            levels = c("BMR_2017","BMR_2018","BMR_2019","OCQ_2018","PR_2018"),
+                            levels = c("BMR_2017","BMR_2018","BMR_2019","OCQ_2018","CHE_2018"),
                             labels = c("Lower Black Mallard - 2017 Collection","Lower Black Mallard - 2018 Collection","Upper Black Mallard - 2019 Collection","Ocqueoc River - 2018 Collection","Pigeon River - 2018 Collection"))
 tiff(filename = "Figures/Age_classification_plot.tiff",width = 4,height = 5,units = "in",res = 400)
 ggplot(all_families, aes(x=Length, fill = clust)) +
@@ -147,3 +169,5 @@ ggplot(all_families, aes(x=Length, fill = clust)) +
         plot.title = element_text(size = 12),
         panel.spacing=unit(1, "lines"))
 dev.off()
+
+

@@ -16,18 +16,25 @@ clust_all1 <- all_families %>% full_join(clust_all,by = c("OffspringID"))
 
 #Black Mallard
 bmr1 <- clust_all1 %>% 
-  filter(samp == "BMR_2017" | samp == "BMR_2018")
+  filter(samp == "BMR_2017" | samp == "BMR_2018" | samp == "BMR_2019")
 
-collect.labs <- c("2017 Collection","2018 Collection")
-names(collect.labs) <- c("BMR_2017", "BMR_2018")
+give.n <- function(x){
+  return(c(y = max(x)*1.08, label = length(x)))
+  # experiment with the multiplier to find the perfect position
+}
+
+collect.labs <- c("2017 Collection","2018 Collection","2019 Collection")
+names(collect.labs) <- c("BMR_2017", "BMR_2018", "BMR_2019")
 bmr_plot <- ggplot(bmr1,aes(x=ClusterIndex,group=ClusterIndex,y=Length,fill=Probability))+
   facet_wrap(vars(samp),labeller =labeller(samp=collect.labs))+
+  stat_summary(fun.data = give.n, geom = "text", fun = median,
+               position = position_dodge(width = 0.75),size = 2)+
   geom_boxplot(alpha=0.3)+
   theme_bw()+
-  scale_fill_gradient(low="red", high="white",name = "Cluster \nLikelihood")+
+  scale_fill_gradient(low="red", high="white",name = "Cluster \nProbability")+
   xlab("Family Cluster")+
   ylab("Length (mm)")+
-  ggtitle("A) Lower Black Mallard River")
+  ggtitle("A) Black Mallard River")
 
 #Ocqueoc
 ocq1 <- clust_all1 %>% 
@@ -37,10 +44,12 @@ collect.labs <- c("2018 Collection")
 names(collect.labs) <- c("OCQ_2018")
 ocq_plot <- ggplot(ocq1,aes(x=ClusterIndex,group=ClusterIndex,y=Length,fill=Probability))+
   facet_wrap(vars(samp),labeller =labeller(samp=collect.labs))+
+  stat_summary(fun.data = give.n, geom = "text", fun = median,
+               position = position_dodge(width = 0.75),size = 2)+
   geom_boxplot(alpha=0.3)+
   theme_bw()+
-  scale_fill_gradient(low="red", high="white",name = "Cluster \n Likelihood")+
-  xlab("Cluster")+
+  scale_fill_gradient(low="red", high="white",name = "Cluster \nProbability")+
+  xlab("Family Cluster")+
   ylab("Length (mm)")+
   ggtitle("B) Ocqueoc River")
 

@@ -1,0 +1,20 @@
+Output from NeEstimator v2.1
+Starting time: Tue Nov  2 13:41:42 2021
+Input File: "CHENeestimator_110221.txt"
+
+Number of Loci = 3087
+
+
+Mating Model: Random
+
+Lowest allele frequency used:    0.0500
+Up to 17 righmost characters can be shown for population names.
+-------------------------------------------------------------------------------------------------------------------------
+Population #   Samp  Weighted      #Indep.   r^2     Exp(r^2)       Ne^                 CIs for Ne^
+then by :Name  Size  H. Mean       Alleles            Sample                    Parametric       Jackknife Samp  (Eff.df)
+-------------------------------------------------------------------------------------------------------------------------
+1:PM_CHE_001    19     16.8        1676  0.093490  0.070050       11.2       8.1      15.8       6.5      20.8       589
+
+Ending time: Tue Nov  2 13:41:42 2021
+-------------------------------------
+

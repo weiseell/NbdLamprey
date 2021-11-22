@@ -12,9 +12,9 @@ source("Homebrew/PwoP_uncert.R")
 source("Homebrew/Ns_calc.R")
 source("Homebrew/multiplot.R")
 #load in data
-
+load("Aging_Models/Family_data_all_locations.rda")
 #prepping lists for storing results
-locs <- unique(all_families$cohort)
+locs <- unique(all_families$newcohort)
 ca_names <- c("bmr15","bmr16","bmral","chePR","OCQ")
 names(ca_names) <- locs
 Nb_PwoP_all <- data.frame(matrix(data = NA, nrow = length(locs), ncol = 6))
@@ -23,7 +23,7 @@ Ns_all <- data.frame(matrix(data = NA, nrow = length(locs), ncol = 6))
 colnames(Ns_all) <- c("loc","Ns" ,"Ns_Chao","Chao_uncert","Ns_Jackknife","Jackknife_uncert")
 
 #loop to calculate Nb - PwoP and extrapolated Ns
-i <- 2
+i <- 1
 for (i in 1:length(locs)) {
   print(i)
   #PwoP

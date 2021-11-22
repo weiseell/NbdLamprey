@@ -1,0 +1,17 @@
+ClusterIndex Probability          OffspringID             FatherID             MotherID
+           1      0.4510           PM_BMR_001                   *1                   #1
+           1      0.4510           PM_BMR_218                   *8                   #1
+           1      0.4510           PM_BMR_226                   *8                   #1
+           2      0.7840           PM_BMR_002                   *2                   #2
+           3      0.8422           PM_BMR_003                   *3                   #3
+           3      0.8422           PM_BMR_005                   *3                   #3
+           3      0.8422           PM_BMR_011                   *3                   #3
+           3      0.8422           PM_BMR_012                   *3                   #3
+           3      0.8422           PM_BMR_013                   *3                   #3
+           3      0.8422           PM_BMR_014                   *3                   #3
+           4      0.8338           PM_BMR_004                   *4                   #4
+           4      0.8338           PM_BMR_006                   *4                   #4
+           5      0.0698           PM_BMR_007                   *5                   #5
+           6      0.7544           PM_BMR_009                   *6                   #6
+           7      0.8649           PM_BMR_010                   *7                   #7
+           8      0.7048           PM_BMR_221                   *9                   #8

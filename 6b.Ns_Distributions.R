@@ -8,10 +8,10 @@ source("Homebrew/multiplot.R")
 #load in data
 load("Aging_Models/Family_data_all_locations.rda")
 #calculate Ns and making accumulation curves
-unique(all_families$cohort)
+unique(all_families$newcohort)
 ##OCQ
 #calculate Ns
-Ns_tmp <- Ns_calc(subset(all_families,all_families$cohort == "OCQ"))
+Ns_tmp <- Ns_calc(subset(all_families,all_families$newcohort == "OCQ16"))
 #isolating data to plot
 df <- data.frame(sites=Ns_tmp[[1]]$sites,richness=Ns_tmp[[1]]$richness,sd=Ns_tmp[[1]]$sd,stringsAsFactors = F)
 reps <- as.data.frame(Ns_tmp[[1]]$perm)
@@ -36,7 +36,7 @@ ocq_plot <- ggplot(df,aes(x=sites,y=richness))+
   ggtitle("D) Ocqueoc River")
 ##BMR
 #calculate Ns
-Ns_tmp <- Ns_calc(subset(all_families,all_families$cohort == "BMR15"))
+Ns_tmp <- Ns_calc(subset(all_families,all_families$newcohort == "BMR_2015"))
 #isolating data to plot
 df <- data.frame(sites=Ns_tmp[[1]]$sites,richness=Ns_tmp[[1]]$richness,sd=Ns_tmp[[1]]$sd,stringsAsFactors = F)
 reps <- as.data.frame(Ns_tmp[[1]]$perm)
@@ -55,12 +55,12 @@ bmrbl_plot1 <- ggplot(df,aes(x=sites,y=richness))+
   geom_text(data=data.frame(x=0,y=Ns_tmp[[2]]$chao), aes(x, y), label=paste("Chao estimate = ",round(Ns_tmp[[2]]$chao,digits = 2)),hjust=0, vjust=-1)+
   geom_hline(yintercept=Ns_tmp[[2]]$jack1)+
   geom_text(data=data.frame(x=0,y=Ns_tmp[[2]]$jack1), aes(x, y), label=paste("Jackknife estimate = ",round(Ns_tmp[[2]]$jack1,digits = 2)),hjust=0, vjust=1.5)+
-  ylim(0,130)+
+  ylim(0,150)+
   xlab("Number of offspring sampled")+
   ylab("Number of parent genotypes")+
   ggtitle("A) Lower Black Mallard - 2015")
 #calculate Ns
-Ns_tmp <- Ns_calc(subset(all_families,all_families$cohort == "BMR16"))
+Ns_tmp <- Ns_calc(subset(all_families,all_families$newcohort == "BMR_2016"))
 #isolating data to plot
 df <- data.frame(sites=Ns_tmp[[1]]$sites,richness=Ns_tmp[[1]]$richness,sd=Ns_tmp[[1]]$sd,stringsAsFactors = F)
 reps <- as.data.frame(Ns_tmp[[1]]$perm)
@@ -76,15 +76,15 @@ bmrbl_plot2 <- ggplot(df,aes(x=sites,y=richness))+
   geom_line()+
   geom_boxplot(data = reps1,aes(group=sites),outlier.shape = NA)+
   geom_hline(yintercept=Ns_tmp[[2]]$chao)+
-  geom_text(data=data.frame(x=0,y=Ns_tmp[[2]]$chao), aes(x, y), label=paste("Chao estimate = ",round(Ns_tmp[[2]]$chao,digits = 2)),hjust=0, vjust=1.5)+
+  geom_text(data=data.frame(x=0,y=Ns_tmp[[2]]$chao), aes(x, y), label=paste("Chao estimate = ",round(Ns_tmp[[2]]$chao,digits = 2)),hjust=0, vjust=-1.5)+
   geom_hline(yintercept=Ns_tmp[[2]]$jack1)+
-  geom_text(data=data.frame(x=0,y=Ns_tmp[[2]]$jack1), aes(x, y), label=paste("Jackknife estimate = ",round(Ns_tmp[[2]]$jack1,digits = 2)),hjust=0, vjust=-1.5)+
+  geom_text(data=data.frame(x=0,y=Ns_tmp[[2]]$jack1), aes(x, y), label=paste("Jackknife estimate = ",round(Ns_tmp[[2]]$jack1,digits = 2)),hjust=0, vjust=1.5)+
   ylim(0,30)+
   xlab("Number of offspring sampled")+
   ylab("Number of parent genotypes")+
   ggtitle("B) Lower Black Mallard - 2016")
 ##chePR
-Ns_tmp <- Ns_calc(subset(all_families,all_families$cohort == "chePR"))
+Ns_tmp <- Ns_calc(subset(all_families,all_families$newcohort == "chePR"))
 #isolating data to plot
 df <- data.frame(sites=Ns_tmp[[1]]$sites,richness=Ns_tmp[[1]]$richness,sd=Ns_tmp[[1]]$sd,stringsAsFactors = F)
 reps <- as.data.frame(Ns_tmp[[1]]$perm)
@@ -109,7 +109,7 @@ che_plot <- ggplot(df,aes(x=sites,y=richness))+
   ggtitle("E) Pigeon River")
 
 ##bmrAL
-Ns_tmp <- Ns_calc(subset(all_families,all_families$cohort == "bmrAL"))
+Ns_tmp <- Ns_calc(subset(all_families,all_families$newcohort == "BMRal"))
 #isolating data to plot
 df <- data.frame(sites=Ns_tmp[[1]]$sites,richness=Ns_tmp[[1]]$richness,sd=Ns_tmp[[1]]$sd,stringsAsFactors = F)
 reps <- as.data.frame(Ns_tmp[[1]]$perm)

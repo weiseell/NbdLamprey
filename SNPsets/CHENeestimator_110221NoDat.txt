@@ -1,0 +1,44 @@
+Missing data from input file CHENeestimator_110221.txt.
+
+Possible four types of missing data at a locus:
+	1. Genotype contains only zeros or partially scored.
+	2. Genotype has less digits than normal one.
+	3. Genotype has more digits than normal one.
+	4. Genotype contains non-digit character.
+Types 3 and 4 stop the program.
+
+In the table, each row is for an individual with missing data
+(a) If column 'Locus' has only one number, then it is the first
+    locus with missing data and also of highest missing data type.
+(b) If column 'Locus' has 2 numbers, then the first number is
+    the first locus with data missing, and the second number is
+    the first locus that has highest missing data type.
+(c) Genotype column contains the genotype of the locus in case (a)
+    or the second locus in case (b).
+
+Population 1 [PM_CHE_001]
+-----------------------------------------------------------
+Individual       Locus         Genotype     Number of Loci
+                                          with missing data
+       1           38             0000            22
+       2            3             0000            13
+       3          420             0000            18
+       4          469             0000            17
+       5            3             0000            11
+       6          217             0000             8
+       7            3             0000             9
+       8           12             0000             9
+       9          217             0000            16
+      10          217             0000            22
+      11            3             0000            10
+      12          217             0000             9
+      13          148             0000            10
+      14          217             0000             4
+      15          176             0000            16
+      16          449             0000            19
+      17           46             0000            16
+      18            3             0000            46
+      19          148             0000            15
+-----------------------------------------------------------
+Total missing data for population    1:          290
+

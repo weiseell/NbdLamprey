@@ -178,9 +178,9 @@ tiff(filename = "Figures/BMR_PCA_plot.tiff",width = 5,height = 5,units = "in",re
 plot(pca$scores[,1], pca$scores[,2],
      col=locs$col,cex=0.5)
 text(x = 0, y = 0, "P.marinus", pos =4, col = "purple",cex = 0.8)
-text(x = 90, y = -40, "I.fosser", pos =1, col = "dark green",cex = 0.8)
+text(x = 90, y = -40, "I.fossor", pos =1, col = "dark green",cex = 0.8)
 text(x = 90, y = 55, "L.appendix", pos =3, col = "blue",cex = 0.8)
-title("Black Mallard River")
+title("Supplmental Figure 1A: Black Mallard River")
 dev.off()
 
 #make a tree
@@ -266,9 +266,9 @@ tiff(filename = "Figures/OCQ_PCA_plot.tiff",width = 5,height = 5,units = "in",re
 plot(pca$scores[,1], pca$scores[,2],
      col=locs$col,cex=0.5)
 text(x = 0, y = 0, "P.marinus", pos =4, col = "purple",cex = 0.8)
-text(x = 90, y = 50, "I.fosser", pos =1, col = "dark green",cex = 0.8)
+text(x = 90, y = 50, "I.fossor", pos =1, col = "dark green",cex = 0.8)
 text(x = 90, y = -60, "L.appendix", pos =3, col = "blue",cex = 0.8)
-title("Ocqueoc River")
+title("Supplemental Figure 1B: Ocqueoc River")
 dev.off()
 
 #make a tree
@@ -362,7 +362,7 @@ plot(pca$scores[,1], pca$scores[,2],
 text(x = 0, y = -40, "P.marinus", pos = 2, col = "purple",cex = 0.8)
 text(x = -50, y = 25, "I.fosser", pos = 3, col = "dark green",cex = 0.8)
 text(x = 100, y = 20, "L.appendix", pos = 2, col = "blue",cex = 0.8)
-title("Cheboyan River")
+title("Supplemental Figure 1C: Pigeon River")
 dev.off()
 #make a tree
 #construct tree
