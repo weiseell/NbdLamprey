@@ -1,3 +1,11 @@
+#PwoP_uncert - function
+#generating confidence intervals for PwoP point estimate
+#requires ConfigArchive (ca) and BestConfig (bc) outputs from Colony converted into data frames
+
+
+
+
+
 #separate config archive in a loop and calculate PwoP on all of them
 PwoP_uncert <- function(ca,bc){
   require(tidyverse)

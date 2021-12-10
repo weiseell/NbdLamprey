@@ -3,7 +3,7 @@
 #called parentage without parents (PwoP) - Waples and Waples 2011
 
 #Inputs
-#df - data frame with four columns: OffspringID, FatherID, MotherID, and ClusterIndex
+#family - data frame with four columns: OffspringID, FatherID, MotherID, and ClusterIndex
 
 PwoP <- function(family){
   #turning parent names into character strings

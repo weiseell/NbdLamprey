@@ -1,10 +1,16 @@
 #genepop_create - function
 #function to create a genepop type output for a SNP data set
+#!# This function outputs a file (genepop input for NeEstimator) to working directory
 
 #Inputs:
-#df - dataframe with pop and ID for all individuals, with all SNP genotype calls in the columns
+#df - 4-column dataframe with pop of each individual (df$pop), 
+  #ID columns for all individuals (df$indiv), 
+  #SNP name (df$SNP), and genotype (df$gt)
+  #!# tidyverse function gather was used to make df input
 #output_file - character string that's the desired name of the output file
 #title - the character string that goes on the top of the file
+
+
 genepop_create <- function(df,output_file = "genepop_file.txt",title){
   #making line 1, which is a character string about the file
   cat(title,file = output_file,sep = "\n",append = T)

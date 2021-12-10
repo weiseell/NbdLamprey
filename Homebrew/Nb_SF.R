@@ -1,6 +1,9 @@
-#Nb_SF <- function
+#Nb_SF - function
 #calculates Nb using the sibship method based on Colony output files
+#!# Still needs fixing, Colony output Output.data.Ne is currently used for SF calculation
 
+#Inputs: 
+#family: data frame containing the following columns: OffspringID, FatherID, MotherID
 Nb_SF <- function(family){
   family$parent_ID <- paste0(family$FatherID,"_",family$MotherID)
   

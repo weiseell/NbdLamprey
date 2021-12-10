@@ -1,5 +1,5 @@
 # Multiple plot function
-#function from cookbook for R
+#function from 'cookbook for R'
 
 # ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
 # - cols:   Number of columns in layout

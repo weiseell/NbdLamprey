@@ -1,18 +1,18 @@
-#ped_filter - function
+#COLONY_filter - function
 #Goal: select SNPs based on a window size to prevent excess linked loci
 
-#ped_filter
+#COLONY_filter
 #select SNPs based on a window size to prevent excess linked loci
 #good for Ne estimates where excess linked loci would create bias
 #default window is 1MB, which is a conservative number to ensure independent loci
 #can change based on recombination rates for specific species
 
 #Inputs:
-#df = file with the following SNP summary statistics:
-#data is already filtered by heterozygosity and sequence depth
+#df = data frame, file with the following SNP summary statistics:
+  #data is already filtered by heterozygosity and sequence depth
 #window = integer - size of average separation between SNPs in bases
 #pGT_min = integer - minimum number for percent individuals genotyped required for a SNP to be included
-#otherwise, another one is selected
+  #otherwise, another one is selected
 
 COLONY_filter <- function(df,window = 1000000,pGT_min = 0.8,MAF_min = 0.05){
   require(tidyverse)

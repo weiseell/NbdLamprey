@@ -1,4 +1,5 @@
 #gt_SNP_stats
+#!# this is now in script 1 line by line, not used anymore (12/08/21 check)
 #function to calculate heterozygosity and percent genotyped for each SNP
 #also incorporates MAF data to quality filter (can turn this off)
 

@@ -3,7 +3,7 @@
 #Good for SNP sets for NeEstimator/LDNe
 
 #Inputs:
-#df: a dataframe containing targeted SNP names and percent genotyped
+#df: dataframe containing targeted SNP names (df$target), percent genotyped (df$pGT)
 
 LD_filter <- function(df){
   require(tidyverse)

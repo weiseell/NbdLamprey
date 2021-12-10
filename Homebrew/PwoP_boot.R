@@ -1,8 +1,11 @@
 #PwoP_boot - function
 #bootstrapping for Parentage without Parents Nb Method
+#!# Not used as of August 2021 - replaced by PwoP_uncert
 
 #Inputs:
-#
+#family - data frame with four columns: OffspringID, FatherID, MotherID, and ClusterIndex
+#iter - the number of iterations used in the bootstrapping algorithm
+#real_Nb - numeric generated from empirical estimate, used to generate CI
 PwoP_boot <- function(family,iter,alpha,real_Nb){
   n_fam <- length(family$FatherID)
   boot_Nb <- numeric(iter)

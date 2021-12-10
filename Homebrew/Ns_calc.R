@@ -2,7 +2,7 @@
 #function takes a colony bestconfig file and does an extrapolated Ns curve
 
 #Inputs:
-#family - best config file (has four columns: OffspringID, FatherID, MotherID, and ClusterIndex)
+#family - data frame, best config file (has four columns: OffspringID, FatherID, MotherID, and ClusterIndex)
 
 #Outputs:
 #list with three elements

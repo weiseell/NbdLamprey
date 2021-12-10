@@ -3,11 +3,11 @@
 
 #Inputs
 #SNPs: dataframe of genotyped SNP locations on a reference genome
-#should have two columns: CHROM and POS
+  #should have two columns: CHROM and POS
 #tags: dataframe of tag locations on the same reference genome as genotyped SNPs
-#should have four columns: ID, CHROM, min, and max
+  #should have four columns: ID, CHROM, min, and max
 #target:logical that determines whether to output all SNPs with locations, or filter out off-target loci
-#off-target loci are marked as off-target in both outputs
+  #!# off-target loci are marked as "NonTarget" in both outputs
 
 #Outputs
 #list of what targets each SNP is mapped to or

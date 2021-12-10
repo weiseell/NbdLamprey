@@ -1,10 +1,11 @@
 ##Mixture analysis functions:
 #Written by: Ellie Weise
 #Last edited: 8/1/19
+#!# replaced by script 3a using bmixture and BayesMix packages instead of mclust as of 2020
 
 #Inputs:
 #data table with at least three columns: ID, V1 and V2 (need these labels)
-#Note: data table should already be sorted by location and year collected
+  #Note: data table should already be sorted by location and year collected
 
 #Output: a list with 3 elements
 #1. complete mclust output

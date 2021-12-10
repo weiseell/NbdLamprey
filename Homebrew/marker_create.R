@@ -3,9 +3,9 @@
 
 #Inputs:
 #SNPs = factor, names of all loci
-#cod = the number of co-dominant markers allowed within COLONY
-#gte = level of genotyping error that's accounted for during COLONY run
-#ote = level of random error that's accounted for during COLONY run
+#cod = numeric, the number of co-dominant markers allowed within COLONY
+#gte = numeric, level of genotyping error that's accounted for during COLONY run
+#ote = numeric, level of random error that's accounted for during COLONY run
 
 marker_create <- function(SNPs,cod = 0,gte = 0.02,ote = 0.001){
   #making a matrix of zeros of the correct size and adding colnames
